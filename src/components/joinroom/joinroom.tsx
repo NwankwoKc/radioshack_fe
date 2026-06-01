@@ -2,7 +2,7 @@ import axios from "axios";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import styles from "./joinroom.module.css";
-
+import { useNavigate } from "react-router";
 interface Room {
   _id: string;
   id?: string;
@@ -29,6 +29,8 @@ function Joinroom() {
   const [joiningRoom, setJoiningRoom] = useState<string | null>(null);
 
   const { userID } = useParams<{ userID: string }>();
+  const navigate = useNavigate()
+
 
   useEffect(() => {
     const fetchRoomDetails = async () => {
@@ -63,9 +65,11 @@ function Joinroom() {
   const handleJoinRoom = async (roomId: string) => {
     try {
       setJoiningRoom(roomId);
+
       // Add your room joining logic here
       // For example, redirect to the actual room or open a connection
       console.log(`Joining room: ${roomId}`);
+      navigate(`/engageroom/${roomId}`)
 
       // Example: Redirect to the actual room
       // window.location.href = `/room/${roomId}`;

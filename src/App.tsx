@@ -11,7 +11,7 @@ function App() {
         <Route path="/createroom" element={<Createaudioroom />} />
         <Route path='/rooms/:userID' element={<Joinroom />} />
         <Route path='/rooms' element={<Audiorooms />} />
-        <Route path='/engageroom' element={<EngagedRoom />} />
+        <Route path='/engageroom/:userID' element={<EngagedRoom />} />
       </Routes>
     </BrowserRouter>
   )

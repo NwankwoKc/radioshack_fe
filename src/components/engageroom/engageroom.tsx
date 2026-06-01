@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import './EngagedRoom.css';
+import styles from './engageroom.module.css';
+import axios from 'axios';
+import { useParams } from 'react-router';
 
 interface Message {
   id: string;
@@ -8,16 +10,11 @@ interface Message {
   isOwn: boolean;
   timestamp: Date;
 }
-interface User {
-  id: string;
-  name: string;
-  avatar: string;
-  role: string;
-  isSpeaking: boolean;
-  hasAudio: boolean;
-}
+
+
 
 const EngagedRoom = () => {
+  const { userID } = useParams<{ userID: string }>();
   const [messages, setMessages] = useState<Message[]>([
     { id: '1', text: 'Hey everyone! Welcome to the engaged studio session 🎧', sender: 'Alex Morgan', isOwn: false, timestamp: new Date(Date.now() - 300000) },
     { id: '2', text: 'Loving the energy in here! Great to see the team.', sender: 'Sofia Chen', isOwn: false, timestamp: new Date(Date.now() - 120000) },
@@ -29,16 +26,7 @@ const EngagedRoom = () => {
   const [inputMessage, setInputMessage] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  const users: User[] = [
-    { id: '1', name: 'Alex Morgan', avatar: 'AM', role: 'Host · Speaker', isSpeaking: true, hasAudio: true },
-    { id: '2', name: 'Jamie T.', avatar: 'JT', role: 'Co-host', isSpeaking: true, hasAudio: true },
-    { id: '3', name: 'Sofia Chen', avatar: 'SC', role: 'Moderator', isSpeaking: false, hasAudio: true },
-    { id: '4', name: 'Marcus R.', avatar: 'MR', role: 'Member', isSpeaking: false, hasAudio: true },
-    { id: '5', name: 'Lina K.', avatar: 'LK', role: 'Design lead', isSpeaking: false, hasAudio: true },
-    { id: '6', name: 'Devon J.', avatar: 'DJ', role: 'Guest speaker', isSpeaking: true, hasAudio: true },
-    { id: '7', name: 'Nina P.', avatar: 'NP', role: 'Visual artist', isSpeaking: false, hasAudio: false },
-    { id: '8', name: 'Taylor W.', avatar: 'TW', role: 'Listener', isSpeaking: false, hasAudio: true },
-  ];
+  const [users, setusers] = useState<any[]>([])
 
   const handleSendMessage = () => {
     if (!inputMessage.trim()) return;
@@ -53,30 +41,15 @@ const EngagedRoom = () => {
 
     setMessages(prev => [...prev, newMessage]);
     setInputMessage('');
-
-    // Simulate reply from random user after 1 second
-    setTimeout(() => {
-      const randomResponders = ['Alex Morgan', 'Sofia Chen', 'Jamie T.', 'Lina K.', 'Marcus R.'];
-      const randomName = randomResponders[Math.floor(Math.random() * randomResponders.length)];
-      const responses = [
-        'Great point! 🙌', 'Totally agree with that!', 'Interesting take 🤔',
-        'Yes! Let\'s keep the momentum.', '🎶 Love the vibe in here',
-        'Can\'t wait to hear more updates', '🔥🔥 absolutely!'
-      ];
-      const randomReply = responses[Math.floor(Math.random() * responses.length)];
-
-      const replyMessage: Message = {
-        id: Date.now().toString(),
-        text: randomReply,
-        sender: randomName,
-        isOwn: false,
-        timestamp: new Date(),
-      };
-      setMessages(prev => [...prev, replyMessage]);
-    }, 800);
   };
 
   useEffect(() => {
+
+
+    axios.get(`http://localhost:3000/rooms/${userID}`).then((el) => {
+      let members = el.data.data.members
+      setusers(members)
+    })
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -85,94 +58,85 @@ const EngagedRoom = () => {
   };
 
   return (
-    <div className="joinRoomContainer">
-      <div className="engagedRoomLayout">
-        {/* MAIN AREA - Room content + users + audio icon */}
-        <div className="roomMainArea">
-          <div className="roomHeader">
-            <div className="roomTitleSection">
-              <span className="roomName">🌿 Creative Collab · Engaged Studio</span>
-              <div className="liveBadge">
-                <span className="pulseDot"></span>
+    <div className={styles.joinRoomContainer}>
+      <div className={styles.engagedRoomLayout}>
+        <div className={styles.roomMainArea}>
+          <div className={styles.roomHeader}>
+            <div className={styles.roomTitleSection}>
+              <span className={styles.roomName}>🌿 Creative Collab · Engaged Studio</span>
+              <div className={styles.liveBadge}>
+                <span className={styles.pulseDot}></span>
                 <span>LIVE · RECORDING</span>
               </div>
             </div>
-            <div className="roomMeta">
+            <div className={styles.roomMeta}>
               <span>🎙️ Hosted by Alex Morgan</span>
-              <span>👥 {users.length + 4} participants</span>
+              <span>👥 {users?.length} participants</span>
               <span>🔒 Private engaged room</span>
-              <span>⏱️ 48 min elapsed</span>
             </div>
           </div>
-
-          {/* Audio icon section */}
-          <div className="audioControlBar">
-            <div className="audioIconWrapper">
-              <div className="micIcon">🎤</div>
+          <div className={styles.audioControlBar}>
+            <div className={styles.audioIconWrapper}>
+              <div className={styles.micIcon}>🎤</div>
               <div>
-                <div className="audioText">Audio stream active</div>
-                <div className="liveAudioStatus">● High quality · engaged</div>
+                <div className={styles.audioText}>Audio stream active</div>
+                <div className={styles.liveAudioStatus}>● High quality · engaged</div>
               </div>
             </div>
-            <div className="statusText">🔈 Room sound: enabled</div>
-            <div className="voiceActivityBadge">
+            <div className={styles.statusText}>🔈 Room sound: enabled</div>
+            <div className={styles.voiceActivityBadge}>
               <span>🔊 Voice activity</span>
             </div>
           </div>
-
-          {/* All users section */}
-          <div className="usersSection">
-            <div className="sectionLabel">
+          <div className={styles.usersSection}>
+            <div className={styles.sectionLabel}>
               <span>👥</span> Active members · engaged now
             </div>
-            <div className="usersGrid">
-              {users.map(user => (
-                <div key={user.id} className="userCard">
-                  <div className="userAvatar">{user.avatar}</div>
-                  <div className="userInfo">
-                    <div className="userName">{user.name}</div>
-                    <div className="userRole">{user.role}</div>
+            <div className={styles.usersGrid}>
+              {users?.map(user => (
+                <div key={user.id} className={styles.userCard}>
+                  <div className={styles.userAvatar}>{user.avatar}</div>
+                  <div className={styles.userInfo}>
+                    <div className={styles.userName}>{user.username}</div>
                   </div>
-                  {user.isSpeaking && <div className="speakerIndicator">🎙️</div>}
-                  {user.hasAudio && !user.isSpeaking && <div className="audioIndicator">🔊</div>}
+                  {user.isSpeaking && <div className={styles.speakerIndicator}>🎙️</div>}
+                  {user.hasAudio && !user.isSpeaking && <div className={styles.audioIndicator}>🔊</div>}
                 </div>
               ))}
             </div>
-            <div className="moreUsersBadge">
-              🟢 +4 more joined recently
-            </div>
           </div>
         </div>
-
-        {/* CHAT SECTION - Quarter width, half height */}
-        <div className="chatSection">
-          <div className="chatHeader">
+        <div className={styles.chatSection}>
+          <div className={styles.chatHeader}>
             <span>💬</span>
             <h3>Room chat · engaged</h3>
-            <span className="messageCount">{messages.length} messages</span>
+            <span className={styles.messageCount}>{messages.length} messages</span>
           </div>
-          <div className="chatMessages">
+          <div className={styles.chatMessages}>
             {messages.map(message => (
-              <div key={message.id} className={`messageBubble ${message.isOwn ? 'messageOwn' : 'messageOther'}`}>
-                <div className="messageMeta">
+              <div
+                key={message.id}
+                className={`${styles.messageBubble} ${message.isOwn ? styles.messageOwn : styles.messageOther}`}
+              >
+                <div className={styles.messageMeta}>
                   <span>{message.sender}</span>
                   <span>{formatTime(message.timestamp)}</span>
                 </div>
-                <div className="messageText">{message.text}</div>
+                <div className={styles.messageText}>{message.text}</div>
               </div>
             ))}
             <div ref={chatEndRef} />
           </div>
-          <div className="chatInputContainer">
+          <div className={styles.chatInputContainer}>
             <input
               type="text"
-              className="chatInput"
+              className={styles.chatInput}
               placeholder="Type your message..."
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             />
-            <button className="sendButton" onClick={handleSendMessage}>
+            <button className={styles.sendButton} onClick={handleSendMessage}>
               Send
             </button>
           </div>
