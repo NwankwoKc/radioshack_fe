@@ -3,7 +3,8 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import styles from "./joinroom.module.css";
 import { useNavigate } from "react-router";
-interface Room {
+import { useLiveKit } from "../../util/livekitcontext";
+interface Roominterface {
   _id: string;
   id?: string;
   roomname: string;
@@ -14,16 +15,12 @@ interface Room {
   };
   creatorName?: string;
   members?: Array<any>;
-  participants: number;
-  maxParticipants?: number;
-  duration?: string;
   isActive?: boolean;
-  createdAt?: string;
-  roomType?: string;
+  createdAt: string
 }
 
 function Joinroom() {
-  const [data, setData] = useState<Room[]>([]);
+  const [data, setData] = useState<Roominterface[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [joiningRoom, setJoiningRoom] = useState<string | null>(null);
@@ -65,18 +62,17 @@ function Joinroom() {
   const handleJoinRoom = async (roomId: string) => {
     try {
       setJoiningRoom(roomId);
+      let roomname = data[0].roomname
+      const response = await axios.post("http://localhost:3000/rooms/token", {
+        room_name: roomname,
+        participant_identity: localStorage.getItem('Uid') || "id1234556789"
+      });
 
-      // Add your room joining logic here
-      // For example, redirect to the actual room or open a connection
+      const freshToken = response.data.data;
+      await useLiveKit().joinRoom('wss://radioshack-z35oydua.livekit.cloud', freshToken);
+
       console.log(`Joining room: ${roomId}`);
       navigate(`/engageroom/${roomId}`)
-
-      // Example: Redirect to the actual room
-      // window.location.href = `/room/${roomId}`;
-
-      // Or if using LiveKit:
-      // const room = new Room();
-      // await room.connect(url, token);
 
       alert(`Successfully joined room: ${roomId}`);
     } catch (err) {
@@ -171,11 +167,7 @@ function Joinroom() {
             <div className={styles.roomCard} key={roomId}>
               {/* Card Header */}
               <div className={styles.roomCardHeader}>
-                {room.roomType && (
-                  <div className={styles.roomType}>
-                    {room.roomType}
-                  </div>
-                )}
+
                 <h3 className={styles.roomName}>{roomName}</h3>
                 {roomId && (
                   <div className={styles.roomId}>
@@ -198,25 +190,8 @@ function Joinroom() {
                     <div className={`${styles.detailIcon} ${styles.participantsIcon}`}>
                       👥
                     </div>
-                    <div>
-                      <div className={styles.detailLabel}>Participants</div>
-                      <div className={styles.detailValue}>
-                        {room.participants || 0}/{room.maxParticipants || '∞'}
-                      </div>
-                    </div>
                   </div>
 
-                  <div className={styles.detailItem}>
-                    <div className={`${styles.detailIcon} ${styles.durationIcon}`}>
-                      ⏱️
-                    </div>
-                    <div>
-                      <div className={styles.detailLabel}>Duration</div>
-                      <div className={styles.detailValue}>
-                        {room.duration || 'N/A'}
-                      </div>
-                    </div>
-                  </div>
 
                   <div className={styles.detailItem}>
                     <div className={`${styles.detailIcon} ${styles.statusIcon}`}>

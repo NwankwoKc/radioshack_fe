@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import styles from './engageroom.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router';
-
+import { useLiveKit } from '../../util/livekitcontext';
+import { RoomEvent } from 'livekit-client';
 interface Message {
   id: string;
   text: string;
@@ -25,7 +26,7 @@ const EngagedRoom = () => {
 
   const [inputMessage, setInputMessage] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
-
+  const { room } = useLiveKit()
   const [users, setusers] = useState<any[]>([])
 
   const handleSendMessage = () => {
@@ -44,11 +45,16 @@ const EngagedRoom = () => {
   };
 
   useEffect(() => {
-
+    if (!room) return
 
     axios.get(`http://localhost:3000/rooms/${userID}`).then((el) => {
       let members = el.data.data.members
       setusers(members)
+    })
+    room.on(RoomEvent.TrackSubscribed, handleTrackSubscribe)
+    room.on(RoomEvent.TrackUnsubscribed, handleTrackDetach)
+    room.on(RoomEvent.ParticipantConnected, (participants) => {
+      console.log(`User joined: ${participants.identity}`)
     })
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
@@ -56,6 +62,12 @@ const EngagedRoom = () => {
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
+  function handleTrackSubscribe() {
+
+  }
+  function handleTrackDetach() {
+
+  }
 
   return (
     <div className={styles.joinRoomContainer}>

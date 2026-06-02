@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import axios from "axios";
-import { Room, LocalTrackPublication, RemoteTrack, RoomEvent, Track } from "livekit-client"
+import { Room } from "livekit-client"
 import "./create-audioroom.module.css"
+
 
 function Createaudioroom() {
   const [token, settoken] = useState("")
@@ -10,65 +11,26 @@ function Createaudioroom() {
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState<string | null>(null);
   const videoref = useRef<HTMLDivElement>(null)
+
+
   const handleSubmit = async (e: any) => {
     //livekit roomcreation
     async function livekitroom() {
-      await axios.post("http://localhost:3000/rooms/token", {
-        room_name: 'roomname',
-        participant_identity: 'participantsname'
-      }).then(response => {
-        settoken(response.data.data)
-      })
-        .catch(err => {
-          console.error("Token generation failed:", err);
-        })
+      try {
+        const response = await axios.post("http://localhost:3000/rooms/token", {
+          room_name: name,
+          participant_identity: localStorage.getItem('Uid') || "id1234556789"
+        });
 
-
-      const room = new Room();
-
-      room.prepareConnection(import.meta.env.VITE_WSURL as string, token)
-
-      room
-        .on(RoomEvent.TrackSubscribed, handletracksubscribed)
-        .on(RoomEvent.TrackUnsubscribed, handletrackunsubscribed)
-        .on(RoomEvent.ActiveSpeakersChanged, handleactivespeacker)
-        .on(RoomEvent.Disconnected, handledisconnected)
-        .on(RoomEvent.LocalTrackUnpublished, handlelocaltrackunpublished)
-
-      room.connect(import.meta.env.VITE_WSURL, token); console.log('connected to room', room.name)
-      function handletracksubscribed(track: RemoteTrack) {
-        if (!track || !videoref) return;
-        if (track.kind === Track.Kind.Video || track.kind === Track.Kind.Audio) {
-          const element = track.attach();
-          if (videoref.current) {
-            videoref.current.innerHTML = ''
-            videoref.current.appendChild(element)
-          }
-        }
-      }
-
-
-      function handletrackunsubscribed(track: RemoteTrack) {
-        track.detach()
-      }
-
-      function handleactivespeacker() {
-
-      }
-
-      function handledisconnected() {
-        console.log('disconnected from room')
-      }
-
-      function handlelocaltrackunpublished(publication: LocalTrackPublication,
-      ) {
-        if (!publication.track) return
-        publication.track.detach();
+        const freshToken = response.data.data;
+        settoken(freshToken);
+        const tk = token
+        const room = new Room();
+        await room.connect('wss://radioshack-z35oydua.livekit.cloud', freshToken);
+      } catch (err) {
+        console.error("Token generation failed:", err);
       }
     }
-
-
-
     if (!name.trim()) {
       seterror('Groupname is required')
       setloading(false)
@@ -85,13 +47,12 @@ function Createaudioroom() {
     };
 
     try {
-      const res = await axios.post('http://localhost:3000/rooms', data);
-      console.log(res)
-      if (res.data.status === 200 || res.data.status === 201) {
-        setname('');
-        setloading(false);
-        livekitroom()
-      }
+      await axios.post('http://localhost:3000/rooms', data);
+      livekitroom()
+      setloading(false);
+      setname('');
+      setdescription('')
+
     } catch (err: any) {
       seterror(err.message || 'An error occurred');
       setloading(false);
