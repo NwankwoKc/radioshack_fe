@@ -5,7 +5,6 @@ import "./create-audioroom.module.css"
 
 
 function Createaudioroom() {
-  const [token, settoken] = useState("")
   const [name, setname] = useState('');
   const [description, setdescription] = useState('')
   const [loading, setloading] = useState(false);
@@ -23,8 +22,7 @@ function Createaudioroom() {
         });
 
         const freshToken = response.data.data;
-        settoken(freshToken);
-        const tk = token
+
         const room = new Room();
         await room.connect('wss://radioshack-z35oydua.livekit.cloud', freshToken);
       } catch (err) {

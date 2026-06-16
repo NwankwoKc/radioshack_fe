@@ -3,7 +3,6 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import styles from "./joinroom.module.css";
 import { useNavigate } from "react-router";
-import { useLiveKit } from "../../util/livekitcontext";
 interface Roominterface {
   _id: string;
   id?: string;
@@ -27,8 +26,6 @@ function Joinroom() {
 
   const { userID } = useParams<{ userID: string }>();
   const navigate = useNavigate()
-
-
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
@@ -60,18 +57,24 @@ function Joinroom() {
   }, [userID]);
 
   const handleJoinRoom = async (roomId: string) => {
+    let name = localStorage.getItem('Udata')
+    if (name)
+      name = JSON.parse(name).data.data.username
     try {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
       const response = await axios.post("http://localhost:3000/rooms/token", {
         room_name: roomname,
-        participant_identity: localStorage.getItem('Uid') || "id1234556789"
+        participant_identity: name
       });
 
       const freshToken = response.data.data;
-      await useLiveKit().joinRoom('wss://radioshack-z35oydua.livekit.cloud', freshToken);
-
       console.log(`Joining room: ${roomId}`);
+      let dt = {
+        url: 'wss://radioshack-z35oydua.livekit.cloud',
+        token: freshToken
+      }
+      localStorage.setItem('data', JSON.stringify(dt))
       navigate(`/engageroom/${roomId}`)
 
       alert(`Successfully joined room: ${roomId}`);
@@ -190,6 +193,7 @@ function Joinroom() {
                     <div className={`${styles.detailIcon} ${styles.participantsIcon}`}>
                       👥
                     </div>
+
                   </div>
 
 

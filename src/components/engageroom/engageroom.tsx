@@ -1,72 +1,135 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './engageroom.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router';
-import { useLiveKit } from '../../util/livekitcontext';
-import { RoomEvent } from 'livekit-client';
+import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
+import { Track } from 'livekit-client'
+
 interface Message {
   id: string;
   text: string;
   sender: string;
   isOwn: boolean;
   timestamp: Date;
+  name: string
 }
-
-
 
 const EngagedRoom = () => {
   const { userID } = useParams<{ userID: string }>();
-  const [messages, setMessages] = useState<Message[]>([
-    { id: '1', text: 'Hey everyone! Welcome to the engaged studio session 🎧', sender: 'Alex Morgan', isOwn: false, timestamp: new Date(Date.now() - 300000) },
-    { id: '2', text: 'Loving the energy in here! Great to see the team.', sender: 'Sofia Chen', isOwn: false, timestamp: new Date(Date.now() - 120000) },
-    { id: '3', text: 'Awesome session, the audio is super clear!', sender: 'You', isOwn: true, timestamp: new Date(Date.now() - 60000) },
-    { id: '4', text: 'The shared design board is 🔥 Are we going to review the new mockups?', sender: 'Marcus R.', isOwn: false, timestamp: new Date(Date.now() - 60000) },
-    { id: '5', text: 'Yes! Let\'s do a quick voice round after this 🎙️', sender: 'Jamie T.', isOwn: false, timestamp: new Date(Date.now() - 30000) },
-  ]);
-
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
-  const { room } = useLiveKit()
-  const [users, setusers] = useState<any[]>([])
+  const room = useMemo(() => new Room(), []);
+  const audioRef = useRef<HTMLMediaElement>(null)
+  const audioTrackRef = useRef<LocalAudioTrack | null>(null)
+  const [isMuted, setIsMuted] = useState(false);
+
+  const ndt = useMemo(() => {
+    const dt = localStorage.getItem('data');
+    if (!dt) return null;
+    return JSON.parse(dt);
+  }, []);
+
+  const [users, setUsers] = useState<any[]>([]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleSendMessage = () => {
+    const encoder = new TextEncoder();
     if (!inputMessage.trim()) return;
 
+    if (!room.localParticipant) return;
+    let name = localStorage.getItem('Udata')
+    if (name)
+      name = JSON.parse(name).data.data.username
+    if (!name) return;
     const newMessage: Message = {
       id: Date.now().toString(),
       text: inputMessage,
       sender: 'You',
       isOwn: true,
       timestamp: new Date(),
+      name
     };
+
+    const data = encoder.encode(JSON.stringify(newMessage));
+    room.localParticipant.publishData(data, {
+      reliable: true,
+      topic: 'chat',
+    });
 
     setMessages(prev => [...prev, newMessage]);
     setInputMessage('');
   };
 
   useEffect(() => {
-    if (!room) return
-
     axios.get(`http://localhost:3000/rooms/${userID}`).then((el) => {
-      let members = el.data.data.members
-      setusers(members)
-    })
-    room.on(RoomEvent.TrackSubscribed, handleTrackSubscribe)
-    room.on(RoomEvent.TrackUnsubscribed, handleTrackDetach)
-    room.on(RoomEvent.ParticipantConnected, (participants) => {
-      console.log(`User joined: ${participants.identity}`)
-    })
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+      const members = el.data.data.members;
+      setUsers(members);
+    });
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
-  function handleTrackSubscribe() {
+    async function connect() {
+      if (!ndt) {
+        console.error('No connection data found in localStorage');
+        return;
+      }
+      await room.connect(ndt.url, ndt.token);
+      const audioTrack = await createLocalAudioTrack();
+      audioTrackRef.current = audioTrack
+      await room.localParticipant.publishTrack(audioTrack)
+    }
 
+    room.on(RoomEvent.TrackSubscribed, handleTrackSubscribe);
+    room.on(RoomEvent.TrackUnsubscribed, handleTrackDetach);
+    connect();
+
+    room.on(RoomEvent.ParticipantConnected, (participant) => {
+      console.log(`User joined: ${participant.identity}`);
+    });
+
+    room.on(RoomEvent.DataReceived, (payload) => {
+      const decoder = new TextDecoder();
+      try {
+        let message: Message = JSON.parse(decoder.decode(payload));
+        message = {
+          ...message,
+          isOwn: false,
+          sender: message.name
+        }
+        setMessages(prev => [...prev, message]);
+        console.log(message)
+      } catch (e) {
+        console.error('Failed to parse incoming message', e);
+      }
+    });
+
+    return () => {
+      audioTrackRef.current?.stop()
+      room.disconnect();
+    };
+  }, []);
+
+  function handleTrackSubscribe(track: RemoteTrack) {
+    if (track.kind === Track.Kind.Audio) {
+      if (audioRef.current) track.attach(audioRef.current);
+    }
   }
-  function handleTrackDetach() {
 
+  function handleTrackDetach(track: RemoteTrack) {
+    if (track.kind === Track.Kind.Audio && audioRef.current) {
+      track.detach(audioRef.current);
+    }
+  }
+  function hanldeTrackMute() {
+    if (audioTrackRef?.current?.isMuted) {
+      audioTrackRef.current.unmute()
+      setIsMuted(false)
+    } else {
+      audioTrackRef?.current?.mute()
+      setIsMuted(true)
+    }
   }
 
   return (
@@ -124,6 +187,12 @@ const EngagedRoom = () => {
             <h3>Room chat · engaged</h3>
             <span className={styles.messageCount}>{messages.length} messages</span>
           </div>
+          <button
+            className={`${styles.micButton} ${isMuted ? styles.muted : styles.active}`}
+            onClick={hanldeTrackMute}
+          >
+            {isMuted ? '🔇 Unmute mic' : '🎤 Mute mic'}
+          </button>
           <div className={styles.chatMessages}>
             {messages.map(message => (
               <div
@@ -132,13 +201,15 @@ const EngagedRoom = () => {
               >
                 <div className={styles.messageMeta}>
                   <span>{message.sender}</span>
-                  <span>{formatTime(message.timestamp)}</span>
                 </div>
                 <div className={styles.messageText}>{message.text}</div>
               </div>
             ))}
             <div ref={chatEndRef} />
           </div>
+          <audio ref={audioRef}
+            autoPlay
+            controls={false} />
           <div className={styles.chatInputContainer}>
             <input
               type="text"

@@ -1,6 +1,5 @@
-import { createContext, useContext, useState } from "react";
-import type { ReactNode } from "react";
-import { Room, RoomEvent } from "livekit-client";
+import React, { createContext, useContext, useState } from 'react';
+import { Room, RoomEvent } from 'livekit-client'; // Adjust import as needed
 
 interface LiveKitContextType {
   room: Room | null;
@@ -9,9 +8,9 @@ interface LiveKitContextType {
   leaveRoom: () => Promise<void>;
 }
 
-const LiveKitContext = createContext<LiveKitContextType | null>(null);
+const LiveKitContext = createContext<LiveKitContextType | undefined>(undefined);
 
-export function LiveKitProvider({ children }: { children: ReactNode }) {
+export function LiveKitProvider({ children }: { children: React.ReactNode }) {
   const [room, setRoom] = useState<Room | null>(null);
   const [isConnected, setIsConnected] = useState<boolean>(false);
 
@@ -35,8 +34,15 @@ export function LiveKitProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const value: LiveKitContextType = {
+    room,
+    isConnected,
+    joinRoom,
+    leaveRoom
+  };
+
   return (
-    <LiveKitContext.Provider value={{ room, isConnected, joinRoom, leaveRoom }}>
+    <LiveKitContext.Provider value={value}>
       {children}
     </LiveKitContext.Provider>
   );
@@ -44,8 +50,10 @@ export function LiveKitProvider({ children }: { children: ReactNode }) {
 
 export function useLiveKit(): LiveKitContextType {
   const context = useContext(LiveKitContext);
-  if (!context) {
+
+  if (context === undefined) {
     throw new Error("useLiveKit must be used within a LiveKitProvider");
   }
+
   return context;
 }
