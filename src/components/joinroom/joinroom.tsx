@@ -3,6 +3,7 @@ import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import styles from "./joinroom.module.css";
 import { useNavigate } from "react-router";
+import type { logindata } from "../../shared/usertype";
 interface Roominterface {
   _id: string;
   id?: string;
@@ -58,17 +59,19 @@ function Joinroom() {
 
   const handleJoinRoom = async (roomId: string) => {
     let name = localStorage.getItem('Udata')
-    if (name)
-      name = JSON.parse(name).data.data.username
+    if (!name) return;
+    let objectname: logindata = JSON.parse(name)
+    let uname = JSON.stringify(objectname?.username)
     try {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
       const response = await axios.post("http://localhost:3000/rooms/token", {
         room_name: roomname,
-        participant_identity: name
+        participant_identity: uname
       });
 
       const freshToken = response.data.data;
+
       console.log(`Joining room: ${roomId}`);
       let dt = {
         url: 'wss://radioshack-z35oydua.livekit.cloud',
@@ -77,10 +80,8 @@ function Joinroom() {
       localStorage.setItem('data', JSON.stringify(dt))
       navigate(`/engageroom/${roomId}`)
 
-      alert(`Successfully joined room: ${roomId}`);
     } catch (err) {
       console.error(`Failed to join room: ${err}`);
-      alert('Failed to join room. Please try again.');
     } finally {
       setJoiningRoom(null);
     }

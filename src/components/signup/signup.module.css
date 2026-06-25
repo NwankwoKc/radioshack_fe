@@ -1,363 +1,328 @@
-/* Signup.css - Matching the provided theme */
-
+/* ── Page wrapper ── */
 .signupContainer {
+  width: 100%;
   min-height: 100vh;
-  background: #f8fafc;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  background: #f8fafc;
 }
-
+ 
 .signupWrapper {
   width: 100%;
-  max-width: 1100px;
-  animation: fadeIn 0.6s ease;
+  max-width: 860px;
 }
-
+ 
+/* ── Card shell ── */
 .signupCard {
   display: flex;
-  background: white;
+  background: #ffffff;
   border-radius: 20px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   overflow: hidden;
-  min-height: 600px;
+  min-height: 580px;
 }
-
-/* Left Brand Section */
+ 
+/* =============================================
+   LEFT — Brand panel
+   ============================================= */
 .signupBrandSection {
   flex: 1;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   padding: 3rem 2.5rem;
   display: flex;
   align-items: center;
-  color: white;
-  position: relative;
-  overflow: hidden;
 }
-
-.signupBrandSection::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
-  animation: rotate 20s linear infinite;
-}
-
+ 
 .brandContent {
-  position: relative;
-  z-index: 1;
-  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
-
+ 
 .brandIcon {
-  margin-bottom: 2rem;
-  animation: pulse 3s infinite;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
 }
-
+ 
 .brandTitle {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  line-height: 1.2;
+  color: #ffffff;
 }
-
+ 
 .brandDescription {
-  font-size: 0.95rem;
-  opacity: 0.9;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.85);
   line-height: 1.6;
-  margin-bottom: 2rem;
 }
-
+ 
 .brandFeatures {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
 }
-
+ 
 .featureItem {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-size: 0.9rem;
-  opacity: 0.9;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.9);
 }
-
+ 
 .featureDot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #10b981;
-  animation: pulse 2s infinite;
+  background: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
 }
-
+ 
+/* =============================================
+   RIGHT — Form panel
+   ============================================= */
 .signupFormSection {
-  flex: 1.2;
-  padding: 2.5rem 2.5rem;
+  flex: 1;
+  padding: 3rem 2.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: 1.25rem;
   overflow-y: auto;
 }
-
+ 
+/* ── Form header ── */
 .formHeader {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
 }
-
+ 
 .formTitle {
   font-size: 1.5rem;
   font-weight: 700;
   color: #1f2937;
-  margin: 0 0 0.5rem 0;
+  margin-bottom: 0.25rem;
 }
-
+ 
 .formSubtitle {
   font-size: 0.85rem;
   color: #6b7280;
-  margin: 0;
 }
-
+ 
+/* ── Form ── */
 .signupForm {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
-
+ 
+/* ── Error message ── */
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+ 
+.errorIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+ 
+.errorText {
+  font-size: 0.85rem;
+  color: #b91c1c;
+}
+ 
+/* ── Input groups ── */
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 6px;
 }
-
+ 
 .inputLabel {
   font-size: 0.85rem;
   font-weight: 600;
   color: #374151;
 }
-
+ 
 .inputWrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
-
-.inputWrapper.inputError .formInput {
+ 
+/* Error border state */
+.inputError .formInput {
   border-color: #ef4444;
-}
-
-.inputWrapper.inputError .formInput:focus {
   box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
 }
-
+ 
 .inputIcon {
   position: absolute;
-  left: 1rem;
+  left: 12px;
   color: #9ca3af;
   display: flex;
   align-items: center;
   pointer-events: none;
 }
-
+ 
 .formInput {
   width: 100%;
-  padding: 0.7rem 1rem 0.7rem 3rem;
+  height: 44px;
+  padding: 0 2.75rem 0 2.75rem;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  font-size: 0.85rem;
-  transition: all 0.2s ease;
-  background: white;
+  font-size: 0.875rem;
   color: #1f2937;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
+ 
+.formInput::placeholder {
+  color: #d1d5db;
+}
+ 
 .formInput:focus {
   outline: none;
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
 }
-
+ 
 .formInput:disabled {
   background: #f9fafb;
+  color: #9ca3af;
   cursor: not-allowed;
 }
-
-.formInput::placeholder {
-  color: #9ca3af;
-}
-
+ 
+/* ── Field success / error feedback ── */
 .fieldSuccess {
   position: absolute;
-  right: 1rem;
+  right: 12px;
   color: #10b981;
-  font-weight: bold;
   font-size: 0.9rem;
+  font-weight: 600;
 }
-
+ 
 .fieldError {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   color: #ef4444;
-  font-weight: 500;
-  animation: fadeIn 0.3s ease;
+  margin-top: 2px;
 }
-
+ 
+/* ── Password toggle ── */
 .togglePassword {
   position: absolute;
-  right: 1rem;
+  right: 10px;
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.1rem;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
+  font-size: 1rem;
+  padding: 4px;
+  line-height: 1;
   color: #9ca3af;
-  transition: color 0.2s ease;
 }
-
-.togglePassword:hover {
-  color: #667eea;
-}
-
-/* Password Strength */
+ 
+/* ── Password strength ── */
 .passwordStrength {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-top: 0.5rem;
+  margin-top: 4px;
 }
-
+ 
 .strengthBar {
   flex: 1;
   height: 4px;
   background: #e5e7eb;
-  border-radius: 2px;
+  border-radius: 30px;
   overflow: hidden;
 }
-
+ 
 .strengthFill {
   height: 100%;
-  border-radius: 2px;
-  transition: all 0.3s ease;
+  border-radius: 30px;
+  transition: width 0.3s ease, background-color 0.3s ease;
 }
-
+ 
 .strengthLabel {
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
+  min-width: 48px;
+  text-align: right;
 }
-
-/* Terms Section */
-.termsSection {
-  margin-top: 0.25rem;
-}
-
-.termsCheckbox {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  cursor: pointer;
-  color: #6b7280;
-  font-size: 0.8rem;
-}
-
-.checkbox {
-  accent-color: #667eea;
-  cursor: pointer;
-  margin-top: 0.15rem;
-}
-
-.checkboxText {
-  font-size: 0.8rem;
-  line-height: 1.4;
-}
-
-.termsLink {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 500;
-  transition: color 0.2s ease;
-}
-
-.termsLink:hover {
-  color: #764ba2;
-}
-
-.errorMessage {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  animation: fadeIn 0.3s ease;
-}
-
-.errorIcon {
-  font-size: 1rem;
-  flex-shrink: 0;
-}
-
-.errorText {
-  color: #92400e;
-  font-size: 0.85rem;
-  font-weight: 500;
-}
-
+ 
+/* ── Submit button ── */
 .submitButton {
-  padding: 0.85rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: white;
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
   border: none;
   border-radius: 10px;
-  font-weight: 600;
   font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  margin-top: 0.25rem;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
-
+ 
 .submitButton:hover:not(:disabled) {
+  opacity: 0.92;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
 }
-
+ 
 .submitButton:active:not(:disabled) {
   transform: translateY(0);
+  opacity: 1;
 }
-
+ 
 .submitButton:disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
-
-.submitButton.loading {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-}
-
+ 
+/* ── Loading spinner ── */
 .spinner {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
   border-radius: 50%;
-  border-top-color: white;
-  animation: spin 0.8s linear infinite;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
 }
-
-/* Divider */
+ 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+ 
+/* ── Divider ── */
 .divider {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 0.25rem 0;
+  gap: 12px;
+  color: #9ca3af;
 }
-
+ 
 .divider::before,
 .divider::after {
   content: '';
@@ -365,119 +330,83 @@
   height: 1px;
   background: #e5e7eb;
 }
-
+ 
 .dividerText {
   font-size: 0.8rem;
-  color: #9ca3af;
   white-space: nowrap;
+  color: #9ca3af;
 }
-
-/* Social Buttons */
+ 
+/* ── Social buttons ── */
 .socialButtons {
   display: flex;
   gap: 0.75rem;
 }
-
+ 
 .socialButton {
   flex: 1;
-  padding: 0.75rem;
+  height: 42px;
   border: 1px solid #e5e7eb;
   border-radius: 10px;
-  background: white;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  background: #ffffff;
+  color: #374151;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  color: #374151;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
 }
-
+ 
 .socialButton:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border-color: #d1d5db;
-}
-
-.googleButton:hover {
   background: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
-
-.githubButton {
-  background: #24292e;
-  color: white;
-  border-color: #24292e;
-}
-
-.githubButton:hover {
-  background: #2f363d;
-  border-color: #2f363d;
-}
-
-/* Login Prompt */
+ 
+/* ── Login prompt ── */
 .loginPrompt {
-  text-align: center;
-  margin-top: 1.5rem;
   font-size: 0.85rem;
   color: #6b7280;
+  text-align: center;
+  margin-top: 0.5rem;
 }
-
+ 
 .loginLink {
   color: #667eea;
   text-decoration: none;
-  font-weight: 600;
-  transition: color 0.2s ease;
+  font-weight: 500;
 }
-
+ 
 .loginLink:hover {
-  color: #764ba2;
+  text-decoration: underline;
 }
-
-/* Animations */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+ 
+/* =============================================
+   Responsive
+   ============================================= */
+@media (max-width: 768px) {
+  .signupCard {
+    flex-direction: column;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+ 
+  .signupBrandSection {
+    padding: 2rem 1.5rem;
   }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
+ 
+  .signupFormSection {
+    padding: 2rem 1.5rem;
   }
 }
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
+ 
+@media (max-width: 480px) {
+  .signupContainer {
+    padding: 1rem;
+  }
+ 
+  .socialButtons {
+    flex-direction: column;
   }
 }
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.signupFormSection::-webkit-scrollbar {
-  width: 6px;
-}
-
-.signupFormSection::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-
+ 

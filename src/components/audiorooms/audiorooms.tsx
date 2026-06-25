@@ -1,8 +1,7 @@
 import { Link } from "react-router";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import "./audiorooms.module.css";
-
+import styles from './audiorooms.module.css';
 function Audiorooms() {
   const [data, setdata] = useState<any[]>([]);
   const [error, seterr] = useState(null);
@@ -31,42 +30,45 @@ function Audiorooms() {
   }
 
   return (
-    <div className="audio-rooms-container">
-      <h2 className="rooms-title">Audio Rooms</h2>
-      <div className="rooms-grid">
+    <div className={styles.audioRoomsContainer}>
+      <h2 className={styles.roomsTitle}>Audio Rooms</h2>
+      <div className={styles.roomsGrid}>
         {data.map((room) => (
-          <div className="room-card" key={room.id || room._id}>
-            <div className="room-card-header">
-              <div className="room-icon">🎙️</div>
-              <h3 className="room-name">{room.roomname || room.name}</h3>
+          <div className={styles.roomCard} key={room.id || room._id}>
+
+            <div className={styles.roomCardHeader}>
+              <div className={styles.roomIcon}>🎙️</div>
+              <h3 className={styles.roomName}>{room.roomname || room.name}</h3>
             </div>
 
-            <div className="room-card-body">
-              <div className="creator-info">
-                <div className="creator-avatar">
+            <div className={styles.roomCardBody}>
+              <div className={styles.creatorInfo}>
+                <div className={styles.creatorAvatar}>
                   {room.creator?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
-                <div className="creator-details">
-                  <span className="creator-label">Created by</span>
-                  <span className="creator-name">{room.creator || 'Unknown'}</span>
+                <div className={styles.creatorDetails}>
+                  <span className={styles.creatorLabel}>Created by</span>
+                  <span className={styles.creatorName}>{room.creator || 'Unknown'}</span>
                 </div>
               </div>
 
               {room.description && (
-                <p className="room-description">{room.description}</p>
+                <p className={styles.roomDescription}>{room.description}</p>
               )}
+
               <Link
                 to={`/rooms/${room.id || room._id}`}
-                className="details-button"
+                className={styles.detailsButton}
               >
                 View Details
-                <span className="arrow">→</span>
+                <span className={styles.arrow}>→</span>
               </Link>
             </div>
+
           </div>
         ))}
       </div>
-    </div >
+    </div>
   );
 }
 

@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useParams } from 'react-router';
 import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
 import { Track } from 'livekit-client'
+import type { logindata } from '../../shared/usertype';
 
 interface Message {
   id: string;
@@ -35,23 +36,30 @@ const EngagedRoom = () => {
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
-
+  const participantsMap = room.remoteParticipants;
+  const allParticipants = Array.from(participantsMap.values());
+  console.log(allParticipants)
+  allParticipants.forEach((participant) => {
+    console.log(participant.identity);
+  });
   const handleSendMessage = () => {
     const encoder = new TextEncoder();
     if (!inputMessage.trim()) return;
 
     if (!room.localParticipant) return;
+
     let name = localStorage.getItem('Udata')
-    if (name)
-      name = JSON.parse(name).data.data.username
     if (!name) return;
+    let objectname: logindata = JSON.parse(name)
+    let uname = JSON.stringify(objectname?.username)
+
     const newMessage: Message = {
       id: Date.now().toString(),
       text: inputMessage,
       sender: 'You',
       isOwn: true,
       timestamp: new Date(),
-      name
+      name: uname
     };
 
     const data = encoder.encode(JSON.stringify(newMessage));
@@ -168,14 +176,13 @@ const EngagedRoom = () => {
               <span>👥</span> Active members · engaged now
             </div>
             <div className={styles.usersGrid}>
-              {users?.map(user => (
-                <div key={user.id} className={styles.userCard}>
-                  <div className={styles.userAvatar}>{user.avatar}</div>
+              {allParticipants?.map(user => (
+                <div key={user.sid} className={styles.userCard}>
+                  <div className={styles.userAvatar}>👥</div>
                   <div className={styles.userInfo}>
-                    <div className={styles.userName}>{user.username}</div>
+                    <div className={styles.userName}>{user.identity}</div>
                   </div>
                   {user.isSpeaking && <div className={styles.speakerIndicator}>🎙️</div>}
-                  {user.hasAudio && !user.isSpeaking && <div className={styles.audioIndicator}>🔊</div>}
                 </div>
               ))}
             </div>

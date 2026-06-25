@@ -1,0 +1,234 @@
+/* ── Page wrapper ── */
+.createRoomContainer {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: #f8fafc;
+}
+ 
+/* ── Card shell ── */
+.createRoomCard {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+ 
+/* ── Card header ── */
+.cardHeader {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 1.75rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #ffffff;
+}
+ 
+.headerIcon {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  backdrop-filter: blur(10px);
+}
+ 
+.cardTitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 0.2rem 0;
+}
+ 
+.cardSubtitle {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+ 
+/* ── Form ── */
+.createRoomForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 2rem;
+}
+ 
+/* ── Error message ── */
+.errorMessage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+ 
+.errorIcon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+ 
+.errorText {
+  font-size: 0.85rem;
+  color: #b91c1c;
+}
+ 
+/* ── Input groups ── */
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+ 
+.inputLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+ 
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+ 
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+}
+ 
+.formInput {
+  width: 100%;
+  height: 44px;
+  padding: 0 1rem 0 2.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  color: #1f2937;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+ 
+.formInput::placeholder {
+  color: #d1d5db;
+}
+ 
+.formInput:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.12);
+}
+ 
+.formInput:disabled {
+  background: #f9fafb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+ 
+/* ── Submit button ── */
+.submitButton {
+  width: 100%;
+  height: 44px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+ 
+.submitButton:hover:not(:disabled) {
+  opacity: 0.92;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35);
+}
+ 
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+  opacity: 1;
+}
+ 
+.submitButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+ 
+.plusIcon {
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1;
+}
+ 
+/* ── Loading spinner ── */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+ 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+ 
+/* ── Video container (ref target) ── */
+.videoContainer {
+  margin: 0 2rem 2rem;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f9fafb;
+  min-height: 0;
+}
+ 
+.videoContainer:not(:empty) {
+  min-height: 200px;
+  border: 1px solid #e5e7eb;
+}
+ 
+/* =============================================
+   Responsive
+   ============================================= */
+@media (max-width: 480px) {
+  .createRoomContainer {
+    padding: 1rem;
+    align-items: flex-start;
+  }
+ 
+  .createRoomForm {
+    padding: 1.5rem;
+  }
+ 
+  .cardHeader {
+    padding: 1.5rem;
+  }
+ 
+  .videoContainer {
+    margin: 0 1.5rem 1.5rem;
+  }
+}
+ 
