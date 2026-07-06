@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Room } from "livekit-client"
 import styles from "./create-audioroom.module.css";
+import { useNavigate } from "react-router";
 type lsdata = {
   username: string,
   id: string
@@ -11,7 +12,7 @@ function Createaudioroom() {
   const [description, setdescription] = useState('')
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState<string | null>(null);
-
+  let navigate = useNavigate()
 
   const handleSubmit = async (e: any) => {
     //livekit roomcreation
@@ -31,7 +32,11 @@ function Createaudioroom() {
         });
 
         const freshToken = response.data.data;
-
+        let dt = {
+          url: 'wss://radioshack-z35oydua.livekit.cloud',
+          token: freshToken
+        }
+        localStorage.setItem('data', JSON.stringify(dt))
         const room = new Room();
         await room.connect('wss://radioshack-z35oydua.livekit.cloud', freshToken);
       } catch (err) {
@@ -59,11 +64,13 @@ function Createaudioroom() {
     };
 
     try {
-      await axios.post('https://radioshack-be.vercel.app/rooms', data);
+      const res = await axios.post('https://radioshack-be.vercel.app/rooms', data);
+      let id = res.data.data.id
       livekitroom()
       setloading(false);
       setname('');
       setdescription('')
+      navigate(`/engageroom/${id}`)
 
     } catch (err: any) {
       seterror(err.message);
