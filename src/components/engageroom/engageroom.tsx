@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './engageroom.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router';
-import { createLocalAudioTrack, LocalAudioTrack, RemoteParticipant, RemoteTrack, Room, RoomEvent } from 'livekit-client';
+import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
 import { Track } from 'livekit-client'
 import type { logindata } from '../../shared/usertype';
 
@@ -32,10 +32,12 @@ const EngagedRoom = () => {
   }, []);
 
   const [users, setUsers] = useState<any[]>([]);
+  const [creator, setcreator] = useState<string>("")
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
   const participantsMap = room.remoteParticipants;
   const allParticipants = Array.from(participantsMap.values());
   console.log(allParticipants)
@@ -75,7 +77,9 @@ const EngagedRoom = () => {
   useEffect(() => {
     axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`).then((el) => {
       const members = el.data.data.members;
-      setUsers(members);
+      const creator = el.data.data.creator.username
+      setcreator(creator)
+      setUsers([...members, creator]);
     });
 
     async function connect() {
@@ -153,7 +157,7 @@ const EngagedRoom = () => {
               </div>
             </div>
             <div className={styles.roomMeta}>
-              <span>🎙️ Hosted by Alex Morgan</span>
+              <span>🎙️ Hosted by {creator}</span>
               <span data-testid="participants">👥 {users?.length} participants</span>
               <span>🔒 Private engaged room</span>
             </div>
@@ -176,6 +180,14 @@ const EngagedRoom = () => {
               <span>👥</span> Active members · engaged now
             </div>
             <div className={styles.usersGrid}>
+              <div className={styles.userCard}>
+                <div className={styles.userAvatar}>👥</div>
+                <div className={styles.userInfo}>
+                  <div className={styles.userName}></div>
+                  <div className={styles.userName}>{creator}</div>
+                </div>
+              </div>
+
               {allParticipants?.map(user => (
                 <div key={user.sid} className={styles.userCard}>
                   <div className={styles.userAvatar}>👥</div>
@@ -183,7 +195,6 @@ const EngagedRoom = () => {
                     <div className={styles.userName}></div>
                     <div className={styles.userName}>{user.identity}</div>
                   </div>
-                  {user.isSpeaking && <div className={styles.speakerIndicator}>🎙️</div>}
                 </div>
               ))}
             </div>
