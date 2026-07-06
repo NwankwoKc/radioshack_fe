@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './engageroom.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router';
-import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
+import { createLocalAudioTrack, LocalAudioTrack, RemoteParticipant, RemoteTrack, Room, RoomEvent } from 'livekit-client';
 import { Track } from 'livekit-client'
 import type { logindata } from '../../shared/usertype';
 
@@ -154,7 +154,7 @@ const EngagedRoom = () => {
             </div>
             <div className={styles.roomMeta}>
               <span>🎙️ Hosted by Alex Morgan</span>
-              <span>👥 {users?.length} participants</span>
+              <span data-testid="participants">👥 {users?.length} participants</span>
               <span>🔒 Private engaged room</span>
             </div>
           </div>
@@ -209,7 +209,7 @@ const EngagedRoom = () => {
                 <div className={styles.messageMeta}>
                   <span>{message.sender}</span>
                 </div>
-                <div className={styles.messageText}>{message.text}</div>
+                <div data-testid="textmessage" className={styles.messageText}>{message.text}</div>
               </div>
             ))}
             <div ref={chatEndRef} />
@@ -219,6 +219,7 @@ const EngagedRoom = () => {
             controls={false} />
           <div className={styles.chatInputContainer}>
             <input
+              data-testid="inputmessage"
               type="text"
               className={styles.chatInput}
               placeholder="Type your message..."
@@ -226,7 +227,7 @@ const EngagedRoom = () => {
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             />
-            <button className={styles.sendButton} onClick={handleSendMessage}>
+            <button data-testid="sendmessage" className={styles.sendButton} onClick={handleSendMessage}>
               Send
             </button>
           </div>

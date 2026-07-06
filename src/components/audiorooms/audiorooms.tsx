@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import styles from './audiorooms.module.css';
+
 function Audiorooms() {
   const [data, setdata] = useState<any[]>([]);
   const [error, seterr] = useState(null);
@@ -26,7 +27,7 @@ function Audiorooms() {
   }
 
   if (error) {
-    return <div className="error">Error loading rooms. Please try again later.</div>;
+    return <div data-testid="error" className="error">Error loading rooms. Please try again later.</div>;
   }
 
   return (
@@ -38,7 +39,7 @@ function Audiorooms() {
 
             <div className={styles.roomCardHeader}>
               <div className={styles.roomIcon}>🎙️</div>
-              <h3 className={styles.roomName}>{room.roomname || room.name}</h3>
+              <h3 data-testid="roomname" className={styles.roomName}>{room.roomname || room.name}</h3>
             </div>
 
             <div className={styles.roomCardBody}>
@@ -48,12 +49,12 @@ function Audiorooms() {
                 </div>
                 <div className={styles.creatorDetails}>
                   <span className={styles.creatorLabel}>Created by</span>
-                  <span className={styles.creatorName}>{room.creator || 'Unknown'}</span>
+                  <span data-testid="creator" className={styles.creatorName}>{room.creator || 'Unknown'}</span>
                 </div>
               </div>
 
               {room.description && (
-                <p className={styles.roomDescription}>{room.description}</p>
+                <p data-testid="description" className={styles.roomDescription}>{room.description}</p>
               )}
 
               <Link

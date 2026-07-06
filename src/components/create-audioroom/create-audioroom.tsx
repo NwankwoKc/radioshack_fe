@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Room } from "livekit-client"
 import styles from "./create-audioroom.module.css";
@@ -8,7 +8,6 @@ function Createaudioroom() {
   const [description, setdescription] = useState('')
   const [loading, setloading] = useState(false);
   const [error, seterror] = useState<string | null>(null);
-  const videoref = useRef<HTMLDivElement>(null)
 
 
   const handleSubmit = async (e: any) => {
@@ -82,7 +81,7 @@ function Createaudioroom() {
           {error && (
             <div className={styles.errorMessage}>
               <span className={styles.errorIcon}>⚠️</span>
-              <span className={styles.errorText}>{error}</span>
+              <span data-testid="errormsg" className={styles.errorText}>{error}</span>
             </div>
           )}
 
@@ -137,6 +136,7 @@ function Createaudioroom() {
 
           {/* Submit Button */}
           <button
+
             type="submit"
             className={`${styles.submitButton} ${loading ? styles.loading : ''}`}
             disabled={loading}
@@ -153,12 +153,7 @@ function Createaudioroom() {
               </>
             )}
           </button>
-
         </form>
-
-        {/* Video ref div — preserved exactly as provided */}
-        <div ref={videoref} className={styles.videoContainer}></div>
-
       </div>
     </div>
   );

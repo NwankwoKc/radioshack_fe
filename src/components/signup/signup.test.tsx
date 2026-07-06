@@ -2,7 +2,6 @@ import { describe, test, expect, vi } from 'vitest';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
 import Signup from './signup';
-import axios from 'axios';
 
 import { BrowserRouter, MemoryRouter } from 'react-router';
 vi.mock('axios')
@@ -10,6 +9,10 @@ vi.mock('useNavigate')
 
 describe('<signup />', () => {
   beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
+  afterEach(() => {
     vi.clearAllMocks()
   })
   test('should mount', () => {

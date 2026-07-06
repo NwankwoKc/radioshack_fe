@@ -25,10 +25,15 @@ const Login = () => {
       return;
     }
 
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
+      console.log('Please enter a valid email address')
       setError('Please enter a valid email address');
       return;
+    }
+    if (emailRegex.test(email)) {
+      console.log('it passed')
     }
 
     setIsLoading(true);
@@ -60,7 +65,6 @@ const Login = () => {
   };
 
   return (
-
     <div className={styles.loginContainer}>
       <div className={styles.loginWrapper}>
         <div className={styles.loginCard}>
@@ -98,7 +102,7 @@ const Login = () => {
           {/* Right Side - Login Form */}
           <div className={styles.loginFormSection}>
             <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>Sign In</h2>
+              <h2 className={styles.formTitle}>Sign Up</h2>
               <p className={styles.formSubtitle}>Enter your credentials to access your account</p>
             </div>
 
@@ -106,7 +110,7 @@ const Login = () => {
               {error && (
                 <div className={styles.errorMessage}>
                   <span className={styles.errorIcon}>⚠️</span>
-                  <span className={styles.errorText}>{error}</span>
+                  <span data-testid="loginerr" className={styles.errorText}>{error}</span>
                 </div>
               )}
 
@@ -122,7 +126,7 @@ const Login = () => {
                     </svg>
                   </span>
                   <input
-                    type="email"
+                    type="text"
                     id="email"
                     className={styles.formInput}
                     placeholder="you@example.com"
@@ -176,6 +180,8 @@ const Login = () => {
               </div>
 
               <button
+                data-testid="createaccount"
+
                 type="submit"
                 className={`${styles.submitButton} ${isLoading ? styles.loading : ''}`}
                 disabled={isLoading}

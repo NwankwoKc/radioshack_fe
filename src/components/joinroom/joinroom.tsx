@@ -172,7 +172,7 @@ function Joinroom() {
               {/* Card Header */}
               <div className={styles.roomCardHeader}>
 
-                <h3 className={styles.roomName}>{roomName}</h3>
+                <h3 data-testid="roomname" className={styles.roomName}>{roomName}</h3>
                 {roomId && (
                   <div className={styles.roomId}>
                     ID: {roomId.slice(0, 8)}...
@@ -183,7 +183,7 @@ function Joinroom() {
               {/* Card Body */}
               <div className={styles.roomCardBody}>
                 {room.description && (
-                  <p className={styles.roomDescription}>
+                  <p data-testid="description" className={styles.roomDescription}>
                     {room.description}
                   </p>
                 )}
@@ -194,7 +194,6 @@ function Joinroom() {
                     <div className={`${styles.detailIcon} ${styles.participantsIcon}`}>
                       👥
                     </div>
-
                   </div>
 
 
@@ -204,7 +203,7 @@ function Joinroom() {
                     </div>
                     <div>
                       <div className={styles.detailLabel}>Status</div>
-                      <div className={styles.detailValue}>
+                      <div data-testid="isActive" className={styles.detailValue}>
                         {getStatusBadge(room.isActive)}
                       </div>
                     </div>
@@ -216,7 +215,7 @@ function Joinroom() {
                     </div>
                     <div>
                       <div className={styles.detailLabel}>Created</div>
-                      <div className={styles.detailValue}>
+                      <div data-testid="createdAt" className={styles.detailValue}>
                         {formatDate(room.createdAt)}
                       </div>
                     </div>
@@ -241,6 +240,7 @@ function Joinroom() {
               {/* Card Footer */}
               <div className={styles.roomCardFooter}>
                 <button
+                  data-testid="handleJoinRoom"
                   className={styles.joinButton}
                   onClick={() => handleJoinRoom(roomId)}
                   disabled={joiningRoom === roomId || room.isActive == false}
