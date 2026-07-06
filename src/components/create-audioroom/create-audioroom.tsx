@@ -2,7 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import { Room } from "livekit-client"
 import styles from "./create-audioroom.module.css";
-
+type lsdata = {
+  username: string,
+  id: string
+}
 function Createaudioroom() {
   const [name, setname] = useState('');
   const [description, setdescription] = useState('')
@@ -12,11 +15,19 @@ function Createaudioroom() {
 
   const handleSubmit = async (e: any) => {
     //livekit roomcreation
+
     async function livekitroom() {
       try {
+        let ls = localStorage.getItem("Udata")
+        if (!ls) {
+          seterror("user not logged in")
+          return
+        }
+        let passcreatorId: lsdata = JSON.parse(ls)
+
         const response = await axios.post("https://radioshack-be.vercel.app/rooms/token", {
           room_name: name,
-          participant_identity: localStorage.getItem('Uid') || "id1234556789"
+          participant_identity: passcreatorId.id
         });
 
         const freshToken = response.data.data;
@@ -35,10 +46,15 @@ function Createaudioroom() {
     e.preventDefault(); // Prevent page reload
     setloading(true);
     seterror(null);
-
+    let ls = localStorage.getItem("Udata")
+    if (!ls) {
+      seterror("user not logged in")
+      return
+    }
+    let passcreatorId = JSON.parse(ls)
     const data = {
       roomname: name,
-      creatorId: localStorage.getItem("userid") || "bb706f87-e5e4-4a78-aae4-6a6d748f1cf9",
+      creatorId: passcreatorId.id,
       description
     };
 
@@ -50,7 +66,7 @@ function Createaudioroom() {
       setdescription('')
 
     } catch (err: any) {
-      seterror(err.message || 'An error occurred');
+      seterror(err.message);
       setloading(false);
       console.error(err);
     }
@@ -136,7 +152,6 @@ function Createaudioroom() {
 
           {/* Submit Button */}
           <button
-
             type="submit"
             className={`${styles.submitButton} ${loading ? styles.loading : ''}`}
             disabled={loading}

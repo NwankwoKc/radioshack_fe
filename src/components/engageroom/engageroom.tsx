@@ -16,7 +16,7 @@ interface Message {
 }
 
 const EngagedRoom = () => {
-  const { userID } = useParams<{ userID: string }>();
+  const { roomID } = useParams<{ roomID: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -73,7 +73,7 @@ const EngagedRoom = () => {
   };
 
   useEffect(() => {
-    axios.get(`https://radioshack-be.vercel.app/rooms/${userID}`).then((el) => {
+    axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`).then((el) => {
       const members = el.data.data.members;
       setUsers(members);
     });
@@ -180,6 +180,7 @@ const EngagedRoom = () => {
                 <div key={user.sid} className={styles.userCard}>
                   <div className={styles.userAvatar}>👥</div>
                   <div className={styles.userInfo}>
+                    <div className={styles.userName}></div>
                     <div className={styles.userName}>{user.identity}</div>
                   </div>
                   {user.isSpeaking && <div className={styles.speakerIndicator}>🎙️</div>}

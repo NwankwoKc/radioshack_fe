@@ -25,13 +25,13 @@ function Joinroom() {
   const [loading, setLoading] = useState(true);
   const [joiningRoom, setJoiningRoom] = useState<string | null>(null);
 
-  const { userID } = useParams<{ userID: string }>();
+  const { roomID } = useParams<{ roomID: string }>();
   const navigate = useNavigate()
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`https://radioshack-be.vercel.app/rooms/${userID}`);
+        const response = await axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`);
         console.log(response.data)
 
         // Handle both single room and array responses
@@ -52,10 +52,10 @@ function Joinroom() {
       }
     };
 
-    if (userID) {
+    if (roomID) {
       fetchRoomDetails();
     }
-  }, [userID]);
+  }, [roomID]);
 
   const handleJoinRoom = async (roomId: string) => {
     let name = localStorage.getItem('Udata')

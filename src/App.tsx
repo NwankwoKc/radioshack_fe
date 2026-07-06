@@ -14,9 +14,9 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/createroom" element={<Createaudioroom />} />
-          <Route path='/rooms/:userID' element={<Joinroom />} />
+          <Route path='/rooms/:roomID' element={<Joinroom />} />
           <Route path='/rooms' element={<Audiorooms />} />
-          <Route path='/engageroom/:userID' element={<EngagedRoom />} />
+          <Route path='/engageroom/:roomID' element={<EngagedRoom />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
           <Route path='/record' element={<SimpleRecordButton />} />

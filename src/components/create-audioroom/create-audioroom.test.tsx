@@ -63,11 +63,13 @@ Object.defineProperty(window, 'localStorage', {
 });
 
 describe('Createaudioroom Component', () => {
+  let ls: string = '{"id": "test-user-id"}'
+  let dt: string = '{"token":"test-uid-123","url":"www.google.com"}'
   beforeEach(() => {
     vi.clearAllMocks();
     mockLocalStorage.getItem.mockImplementation((key: string) => {
-      if (key === 'userid') return 'test-user-id';
-      if (key === 'Uid') return 'test-uid-123';
+      if (key === 'Udata') return ls;
+      if (key === 'data') return dt;
       return null;
     });
   });
