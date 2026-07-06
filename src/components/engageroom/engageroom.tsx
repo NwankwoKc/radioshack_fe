@@ -73,7 +73,7 @@ const EngagedRoom = () => {
   };
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/rooms/${userID}`).then((el) => {
+    axios.get(`https://radioshack-be.vercel.app/rooms/${userID}`).then((el) => {
       const members = el.data.data.members;
       setUsers(members);
     });

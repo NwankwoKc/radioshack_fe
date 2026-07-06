@@ -39,7 +39,7 @@ describe('<audiorooms />', () => {
 
     render(<BrowserRouter><Audiorooms /></BrowserRouter>);
 
-    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('http://localhost:3000/rooms'))
+    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms'))
     expect(screen.getByTestId("description").innerHTML).toContain("description")
     expect(screen.getByTestId("creator").innerHTML).toContain("creator")
     expect(screen.getByTestId("roomname").innerHTML).toContain("roomname")
@@ -50,7 +50,7 @@ describe('<audiorooms />', () => {
 
     render(<BrowserRouter><Audiorooms /></BrowserRouter>);
 
-    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('http://localhost:3000/rooms'))
+    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms'))
     expect(screen.getByTestId("error").innerHTML).toContain("Error loading rooms. Please try again later.")
   })
 });

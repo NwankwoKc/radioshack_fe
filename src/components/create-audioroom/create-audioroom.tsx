@@ -14,7 +14,7 @@ function Createaudioroom() {
     //livekit roomcreation
     async function livekitroom() {
       try {
-        const response = await axios.post("http://localhost:3000/rooms/token", {
+        const response = await axios.post("https://radioshack-be.vercel.app/rooms/token", {
           room_name: name,
           participant_identity: localStorage.getItem('Uid') || "id1234556789"
         });
@@ -43,7 +43,7 @@ function Createaudioroom() {
     };
 
     try {
-      await axios.post('http://localhost:3000/rooms', data);
+      await axios.post('https://radioshack-be.vercel.app/rooms', data);
       livekitroom()
       setloading(false);
       setname('');

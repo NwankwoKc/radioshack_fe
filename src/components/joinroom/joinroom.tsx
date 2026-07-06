@@ -31,7 +31,7 @@ function Joinroom() {
     const fetchRoomDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:3000/rooms/${userID}`);
+        const response = await axios.get(`https://radioshack-be.vercel.app/rooms/${userID}`);
         console.log(response.data)
 
         // Handle both single room and array responses
@@ -65,7 +65,7 @@ function Joinroom() {
     try {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
-      const response = await axios.post("http://localhost:3000/rooms/token", {
+      const response = await axios.post("https://radioshack-be.vercel.app/rooms/token", {
         room_name: roomname,
         participant_identity: uname
       });

@@ -57,11 +57,11 @@ describe('getroom', () => {
     vi.mocked(axios.get).mockResolvedValueOnce(mockResponse);
 
     // Test if mock works directly
-    const result = await axios.get('http://localhost:3000/rooms/123');
+    const result = await axios.get('https://radioshack-be.vercel.app/rooms/123');
     console.log('Axios mock result:', result); // Should show your mockResponse
 
     // Verify the mock was called
-    expect(axios.get).toHaveBeenCalledWith('http://localhost:3000/rooms/123');
+    expect(axios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms/123');
     expect(result).toEqual(mockResponse);
   });
   test('test if renders roominfo', async () => {
@@ -102,7 +102,7 @@ describe('getroom', () => {
 
     expect(name.innerHTML).toContain("roomname")
     expect(description.innerHTML).toContain("description")
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/rooms/${userID}`)
+    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${userID}`)
   })
 });
 
@@ -164,7 +164,7 @@ describe('join room', () => {
     expect(mockGetItem).toHaveBeenCalled()
     expect(mockGetItem).toHaveBeenCalledWith('Udata')
     expect(axios.post).toHaveBeenCalled()
-    expect(axios.post).toHaveBeenCalledWith("http://localhost:3000/rooms/token", {
+    expect(axios.post).toHaveBeenCalledWith("https://radioshack-be.vercel.app/rooms/token", {
       room_name: mockuserreponse.roomname,
       participant_identity: uname
     })
@@ -174,6 +174,6 @@ describe('join room', () => {
 
     expect(name.innerHTML).toContain("roomname")
     expect(description.innerHTML).toContain("description")
-    expect(axios.get).toHaveBeenCalledWith(`http://localhost:3000/rooms/${userID}`)
+    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${userID}`)
   })
 })

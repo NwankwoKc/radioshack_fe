@@ -100,7 +100,7 @@ describe('<engageroom />', () => {
     await waitFor(() => expect(screen.getByTestId('participants').innerHTML).toContain("👥"))
 
     expect(req).toHaveBeenCalled()
-    expect(req).toHaveBeenCalledWith(`http://localhost:3000/rooms/${userID}`)
+    expect(req).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${userID}`)
   })
   test('if chatbox is working correctly', async () => {
 

@@ -39,7 +39,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/auth', {
+      const response = await axios.post('https://radioshack-be.vercel.app/auth', {
         email,
         password
       })

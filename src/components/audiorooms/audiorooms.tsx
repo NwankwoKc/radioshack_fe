@@ -9,7 +9,7 @@ function Audiorooms() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/rooms')
+    axios.get('https://radioshack-be.vercel.app/rooms')
       .then(response => {
         console.log(response.data.data);
         setdata(response.data.data);

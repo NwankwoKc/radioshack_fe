@@ -155,7 +155,7 @@ describe('Createaudioroom Component', () => {
     // Verify first API call (create room)
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'http://localhost:3000/rooms',
+        'https://radioshack-be.vercel.app/rooms',
         {
           roomname: 'My Room',
           creatorId: 'test-user-id',
@@ -167,7 +167,7 @@ describe('Createaudioroom Component', () => {
     // Verify second API call (token generation)
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'http://localhost:3000/rooms/token',
+        'https://radioshack-be.vercel.app/rooms/token',
         {
           room_name: 'My Room',
           participant_identity: 'test-uid-123',
@@ -200,7 +200,7 @@ describe('Createaudioroom Component', () => {
 
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'http://localhost:3000/rooms',
+        'https://radioshack-be.vercel.app/rooms',
         expect.objectContaining({
           description: '',
         })
@@ -248,7 +248,7 @@ describe('Createaudioroom Component', () => {
 
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'http://localhost:3000/rooms',
+        'https://radioshack-be.vercel.app/rooms',
         expect.objectContaining({
           creatorId: 'bb706f87-e5e4-4a78-aae4-6a6d748f1cf9',
         })
