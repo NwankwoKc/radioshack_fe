@@ -8,18 +8,38 @@ import { LiveKitProvider } from './util/livekitcontext.tsx'
 import Login from './components/login/login.tsx'
 import Signup from './components/signup/signup.tsx'
 import SimpleRecordButton from './util/record.tsx'
+import { Outlet, useLocation } from 'react-router'
+import BottomNavBar from './components/bottomnavbar/bottomnavbar.tsx'
+
+function MainLayout() {
+  const location = useLocation();
+  const hideNav = ['/login', '/signup'].includes(location.pathname);
+
+  return (
+    <div>
+      {!hideNav && <BottomNavBar />}
+      <Outlet />
+    </div>
+  );
+}
+
 function App() {
   return (
     <LiveKitProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/createroom" element={<Createaudioroom />} />
-          <Route path='/rooms/:roomID' element={<Joinroom />} />
-          <Route path='/rooms' element={<Audiorooms />} />
-          <Route path='/engageroom/:roomID' element={<EngagedRoom />} />
+          <Route element={<MainLayout />}>
+
+            <Route path="/createroom" element={<Createaudioroom />} />
+            <Route path='/rooms/:roomID' element={<Joinroom />} />
+            <Route path='/rooms' element={<Audiorooms />} />
+            <Route path='/engageroom/:roomID' element={<EngagedRoom />} />
+            <Route path='/record' element={<SimpleRecordButton />} />
+            <Route path='/' element={<Signup />} />
+          </Route>
+
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
-          <Route path='/record' element={<SimpleRecordButton />} />
         </Routes>
       </BrowserRouter >
     </LiveKitProvider>
