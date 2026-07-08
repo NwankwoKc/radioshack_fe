@@ -24,7 +24,7 @@ const EngagedRoom = () => {
   const audioRef = useRef<HTMLMediaElement>(null)
   const audioTrackRef = useRef<LocalAudioTrack | null>(null)
   const [isMuted, setIsMuted] = useState(false);
-  const [allparticipants, setallparticipants] = useState<Array<string>>([])
+  const [allparticipants, setallparticipants] = useState<Map<string, string>>(new Map())
   const ndt = useMemo(() => {
     const dt = localStorage.getItem('data');
     if (!dt) return null;
@@ -87,8 +87,10 @@ const EngagedRoom = () => {
       let part: Array<string> = []
       room.remoteParticipants.forEach((_participant, identity) => {
         part.push(identity)
+        setallparticipants((prevMap) => (prevMap.set(identity, identity)))
+        console.log(allparticipants)
       });
-      setallparticipants(part)
+
 
       const audioTrack = await createLocalAudioTrack();
       audioTrackRef.current = audioTrack
@@ -100,8 +102,12 @@ const EngagedRoom = () => {
     connect();
     room.on(RoomEvent.ParticipantConnected, (participants) => {
       console.log(`User joined: ${participants.identity}`);
-      setallparticipants(prev => [...prev, participants.identity])
+      setallparticipants((prevMap) => new Map(prevMap.set(participants.identity, participants.identity)))
     });
+    room.on(RoomEvent.ParticipantDisconnected, (particpants) => {
+      allparticipants.delete(particpants.identity)
+      console.log(`User left${particpants.identity}`)
+    })
 
     room.on(RoomEvent.DataReceived, (payload) => {
       const decoder = new TextDecoder();
@@ -190,7 +196,7 @@ const EngagedRoom = () => {
                 </div>
               </div>
 
-              {allparticipants?.map(user => (
+              {Array.from(allparticipants, ([_id, user]) => (
                 <div className={styles.userCard}>
                   <div className={styles.userAvatar}>👥</div>
                   <div className={styles.userInfo}>
