@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './engageroom.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router';
-import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
+import { createLocalAudioTrack, LocalAudioTrack, RemoteParticipant, RemoteTrack, Room, RoomEvent } from 'livekit-client';
 import { Track } from 'livekit-client'
 import type { logindata } from '../../shared/usertype';
 
@@ -24,7 +24,7 @@ const EngagedRoom = () => {
   const audioRef = useRef<HTMLMediaElement>(null)
   const audioTrackRef = useRef<LocalAudioTrack | null>(null)
   const [isMuted, setIsMuted] = useState(false);
-
+  const [allparticipants, setallparticipants] = useState<Array<string>>([])
   const ndt = useMemo(() => {
     const dt = localStorage.getItem('data');
     if (!dt) return null;
@@ -38,12 +38,6 @@ const EngagedRoom = () => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const participantsMap = room.remoteParticipants;
-  const allParticipants = Array.from(participantsMap.values());
-  console.log(allParticipants)
-  allParticipants.forEach((participant) => {
-    console.log(participant.identity);
-  });
   const handleSendMessage = () => {
     const encoder = new TextEncoder();
     if (!inputMessage.trim()) return;
@@ -74,6 +68,7 @@ const EngagedRoom = () => {
     setInputMessage('');
   };
 
+
   useEffect(() => {
     axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`).then((el) => {
       const members = el.data.data.members;
@@ -88,6 +83,13 @@ const EngagedRoom = () => {
         return;
       }
       await room.connect(ndt.url, ndt.token);
+      // After await room.connect()
+      let part: Array<string> = []
+      room.remoteParticipants.forEach((_participant, identity) => {
+        part.push(identity)
+      });
+      setallparticipants(part)
+
       const audioTrack = await createLocalAudioTrack();
       audioTrackRef.current = audioTrack
       await room.localParticipant.publishTrack(audioTrack)
@@ -96,9 +98,9 @@ const EngagedRoom = () => {
     room.on(RoomEvent.TrackSubscribed, handleTrackSubscribe);
     room.on(RoomEvent.TrackUnsubscribed, handleTrackDetach);
     connect();
-
-    room.on(RoomEvent.ParticipantConnected, (participant) => {
-      console.log(`User joined: ${participant.identity}`);
+    room.on(RoomEvent.ParticipantConnected, (participants) => {
+      console.log(`User joined: ${participants.identity}`);
+      setallparticipants(prev => [...prev, participants.identity])
     });
 
     room.on(RoomEvent.DataReceived, (payload) => {
@@ -188,12 +190,12 @@ const EngagedRoom = () => {
                 </div>
               </div>
 
-              {allParticipants?.map(user => (
-                <div key={user.sid} className={styles.userCard}>
+              {allparticipants?.map(user => (
+                <div className={styles.userCard}>
                   <div className={styles.userAvatar}>👥</div>
                   <div className={styles.userInfo}>
                     <div className={styles.userName}></div>
-                    <div className={styles.userName}>{user.identity}</div>
+                    <div className={styles.userName}>{user}</div>
                   </div>
                 </div>
               ))}

@@ -10,6 +10,9 @@ import Signup from './components/signup/signup.tsx'
 import SimpleRecordButton from './util/record.tsx'
 import { Outlet, useLocation } from 'react-router'
 import BottomNavBar from './components/bottomnavbar/bottomnavbar.tsx'
+import Search from './components/search/search.tsx'
+import ProfileCard from './components/profile/profile.tsx'
+
 
 function MainLayout() {
   const location = useLocation();
@@ -34,6 +37,8 @@ function App() {
             <Route path='/rooms/:roomID' element={<Joinroom />} />
             <Route path='/rooms' element={<Audiorooms />} />
             <Route path='/engageroom/:roomID' element={<EngagedRoom />} />
+            <Route path='/profile' element={<ProfileCard />} />
+            <Route path='/search' element={<Search />} />
             <Route path='/record' element={<SimpleRecordButton />} />
             <Route path='/' element={<Signup />} />
           </Route>
