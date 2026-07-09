@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './engageroom.module.css';
 import axios from 'axios';
 import { useParams } from 'react-router';
-import { createLocalAudioTrack, LocalAudioTrack, RemoteParticipant, RemoteTrack, Room, RoomEvent } from 'livekit-client';
+import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
 import { Track } from 'livekit-client'
 import type { logindata } from '../../shared/usertype';
 

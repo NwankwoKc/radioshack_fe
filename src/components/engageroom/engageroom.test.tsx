@@ -53,8 +53,7 @@ vi.spyOn(React, 'useRef').mockReturnValue({ current: { scrollIntoView: vi.fn(), 
 vi.mock('axios');
 
 vi.mock('react-router', () => ({
-  ...vi.importActual('react-router'),
-  useParams: vi.fn().mockReturnValue({ UserID: "1234" })
+  useParams: vi.fn().mockReturnValue({ roomID: "1234" })
 }));
 
 const mockGetItem = vi.fn().mockReturnValue('{"url":"url","token":"token"}');
@@ -68,17 +67,21 @@ Object.defineProperty(window, "localStorage", {
   },
 });
 Element.prototype.scrollIntoView = vi.fn();
-vi.spyOn(axios, 'get').mockResolvedValue({
-  data: {
-    data: {
-      members: [{}, {}]
-    }
-  }
-})
 
 
 describe('<engageroom />', () => {
   beforeEach(() => {
+    vi.spyOn(axios, 'get').mockResolvedValue({
+      data: {
+        data: {
+          members: [{}, {}, {}],
+          creator: {
+            username: 'great khalisi'
+          }
+        }
+      }
+    })
+
   })
 
   test('should mount', () => {
@@ -86,21 +89,24 @@ describe('<engageroom />', () => {
   });
 
   test('test if axios request is working', async () => {
-    const { userID } = useParams<{ userID: string }>();
+    const { roomID } = useParams<{ roomID: string }>();
+    console.log(`${roomID} mocked useparams`)
     const req = vi.spyOn(axios, 'get').mockResolvedValue({
       data: {
         data: {
-          members: [{}, {}, {}]
+          members: [{}, {}, {}],
+          creator: {
+            username: 'great khalisi'
+          }
         }
       }
     })
     render(<Engageroom />);
 
-    await waitFor(() => expect(screen.getByTestId('participants').innerHTML).toContain("3 participants"))
-    await waitFor(() => expect(screen.getByTestId('participants').innerHTML).toContain("👥"))
+    await waitFor(() => expect(screen.getByTestId('participants').innerHTML).toContain(`👥 ${3 + 1} participants`))
 
     expect(req).toHaveBeenCalled()
-    expect(req).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${userID}`)
+    expect(req).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`)
   })
   test('if chatbox is working correctly', async () => {
 
