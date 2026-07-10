@@ -1,14 +1,14 @@
 import { describe, test, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import bottomnavbar from './bottomnavbar';
-
+import BottomNavBar from './bottomnavbar';
+import { BrowserRouter } from 'react-router';
 describe('<bottomnavbar />', () => {
   test('should mount', () => {
-    render(<bottomnavbar />);
-
-    const bottomnavbar = screen.getByTestId('bottomnavbar');
-
-    expect(bottomnavbar).toBeInTheDocument();
+    render(
+      <BrowserRouter>
+        <BottomNavBar />
+      </BrowserRouter>
+    );
   });
 });

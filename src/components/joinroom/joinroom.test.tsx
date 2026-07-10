@@ -11,7 +11,7 @@ vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
-    useParams: () => ({ userID: '123' }), // This is crucial!
+    useParams: () => ({ roomID: '123' }), // This is crucial!
   };
 });
 
@@ -65,7 +65,6 @@ describe('getroom', () => {
     expect(result).toEqual(mockResponse);
   });
   test('test if renders roominfo', async () => {
-
     let mockuserreponse = {
       id: "id",
       roomname: "roomname",
@@ -78,7 +77,6 @@ describe('getroom', () => {
       members: [],
       isActive: true,
       createdAt: "date"
-
     }
 
     vi.mocked(axios.get).mockResolvedValue({
@@ -94,7 +92,7 @@ describe('getroom', () => {
         </BrowserRouter>
       );
     })
-    const { userID } = useParams<{ userID: string }>();
+    const { roomID } = useParams<{ roomID: string }>();
 
     let name = await waitFor(() => screen.getByTestId('roomname'))
     let description = await waitFor(() => screen.getByTestId('description'))
@@ -102,7 +100,7 @@ describe('getroom', () => {
 
     expect(name.innerHTML).toContain("roomname")
     expect(description.innerHTML).toContain("description")
-    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${userID}`)
+    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`)
   })
 });
 
@@ -147,7 +145,7 @@ describe('join room', () => {
         </BrowserRouter>
       );
     })
-    const { userID } = useParams<{ userID: string }>();
+    const { roomID } = useParams<{ roomID: string }>();
 
     const user = userEvent.setup()
     let name = await waitFor(() => screen.getByTestId('roomname'))
@@ -174,6 +172,6 @@ describe('join room', () => {
 
     expect(name.innerHTML).toContain("roomname")
     expect(description.innerHTML).toContain("description")
-    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${userID}`)
+    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`)
   })
 })
