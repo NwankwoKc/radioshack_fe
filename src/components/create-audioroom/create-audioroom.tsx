@@ -25,10 +25,14 @@ function Createaudioroom() {
           return
         }
         let passcreatorId: lsdata = JSON.parse(ls)
-
+        let token = localStorage.getItem('token')
         const response = await axios.post("https://radioshack-be.vercel.app/rooms/token", {
           room_name: name,
           participant_identity: passcreatorId.id
+        }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         });
 
         const freshToken = response.data.data;
@@ -64,7 +68,12 @@ function Createaudioroom() {
     };
 
     try {
-      const res = await axios.post('https://radioshack-be.vercel.app/rooms', data);
+      const token = localStorage.getItem('token')
+      const res = await axios.post('https://radioshack-be.vercel.app/rooms', data, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       let id = res.data.data.id
       livekitroom()
       setloading(false);

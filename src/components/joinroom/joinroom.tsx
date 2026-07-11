@@ -31,7 +31,12 @@ function Joinroom() {
     const fetchRoomDetails = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`);
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         console.log(response.data)
 
         // Handle both single room and array responses
@@ -65,9 +70,14 @@ function Joinroom() {
     try {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
+      const token = localStorage.getItem('token')
       const response = await axios.post("https://radioshack-be.vercel.app/rooms/token", {
         room_name: roomname,
         participant_identity: uname
+      }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       });
 
       const freshToken = response.data.data;

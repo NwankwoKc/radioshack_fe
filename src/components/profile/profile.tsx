@@ -26,13 +26,18 @@ export default function ProfileCard() {
   const [profilePicUrl, setprofilePicUrl] = useState('')
 
   function getprofile() {
+    const token = localStorage.getItem('token')
     let id = localStorage.getItem('Udata')
     if (!id) {
       return
     }
     id = JSON.parse(id).id
     console.log(id)
-    axios.get(`https://radioshack-be.vercel.app/users/${id}`).then(el => {
+    axios.get(`https://radioshack-be.vercel.app/users/${id}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then(el => {
       let result = el.data.data
       console.log(result)
       setusername(result.username)

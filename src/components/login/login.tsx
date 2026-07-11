@@ -44,6 +44,7 @@ const Login = () => {
         password
       })
       localStorage.setItem('Udata', JSON.stringify({ username: response.data.data.username, id: response.data.data.id }))
+      localStorage.setItem('token', response.data.data.token)
       navigate('/rooms')
 
       console.log('Login attempted with:', { email, password });

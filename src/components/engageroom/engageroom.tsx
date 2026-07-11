@@ -70,7 +70,12 @@ const EngagedRoom = () => {
 
 
   useEffect(() => {
-    axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`).then((el) => {
+    const token = localStorage.getItem('token')
+    axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then((el) => {
       const members = el.data.data.members;
       const creator = el.data.data.creator.username
       setcreator(creator)
