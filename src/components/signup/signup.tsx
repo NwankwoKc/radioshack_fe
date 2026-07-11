@@ -181,6 +181,7 @@ const Signup = () => {
     try {
       const response = await axios.post('https://radioshack-be.vercel.app/users', formData)
       localStorage.setItem('Udata', JSON.stringify({ username: response.data.data.username, id: response.data.data.id }))
+      localStorage.setItem('token', response.data.data.token)
       navigate('/rooms')
 
     } catch (err) {

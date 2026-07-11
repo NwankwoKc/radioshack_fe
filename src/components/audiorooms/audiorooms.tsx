@@ -9,7 +9,12 @@ function Audiorooms() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('https://radioshack-be.vercel.app/rooms')
+    const token = localStorage.getItem('token')
+    axios.get('https://radioshack-be.vercel.app/rooms', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(response => {
         console.log(response.data.data);
         setdata(response.data.data);
