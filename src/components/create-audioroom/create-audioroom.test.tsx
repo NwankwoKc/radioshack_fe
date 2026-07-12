@@ -70,6 +70,7 @@ describe('Createaudioroom Component', () => {
     mockLocalStorage.getItem.mockImplementation((key: string) => {
       if (key === 'Udata') return ls;
       if (key === 'data') return dt;
+      if (key === 'token') return "token"
       return null;
     });
   });
@@ -155,16 +156,18 @@ describe('Createaudioroom Component', () => {
   // Test 5: Successful form submission
   test('should submit form successfully and make API calls', async () => {
     mockedAxios.post.mockImplementation((url: string, _data: any) => {
-      if (url === "https://radioshack-be.vercel.app/rooms/token") {
+      if (url === "https://radioshack-be.vercel.app/rooms") {
         return Promise.resolve({ data: { data: { id: "roomid" } } })
       } else {
         return Promise.resolve({ data: { success: true, data: "token" } })
       }
     })
 
+    const token = "token"
     render(
       <BrowserRouter><Createaudioroom /></BrowserRouter>
     );
+
     const user = userEvent.setup();
 
     const nameInput = screen.getByLabelText('Group Name');
@@ -184,6 +187,11 @@ describe('Createaudioroom Component', () => {
           roomname: 'My Room',
           creatorId: 'test-user-id',
           description: 'Room description'
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         }
       );
     });
@@ -195,7 +203,11 @@ describe('Createaudioroom Component', () => {
         {
           room_name: 'My Room',
           participant_identity: 'test-user-id'
+        }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      }
       );
     });
 
@@ -219,7 +231,7 @@ describe('Createaudioroom Component', () => {
 
     const nameInput = screen.getByLabelText('Group Name');
     await user.type(nameInput, 'Room Only');
-
+    const token = "token"
     const submitButton = screen.getByRole('button', { name: /create room/i });
     await user.click(submitButton);
 
@@ -228,7 +240,15 @@ describe('Createaudioroom Component', () => {
         'https://radioshack-be.vercel.app/rooms',
         expect.objectContaining({
           description: '',
-        })
+          roomname: "Room Only",
+          creatorId: "test-user-id"
+        }),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+
+        }
       );
     });
   });

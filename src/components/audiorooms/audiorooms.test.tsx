@@ -36,21 +36,31 @@ describe('<audiorooms />', () => {
         }]
       }
     })
-
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('token')
     render(<BrowserRouter><Audiorooms /></BrowserRouter>);
-
-    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms'))
+    const token = 'token'
+    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }))
     expect(screen.getByTestId("description").innerHTML).toContain("description")
     expect(screen.getByTestId("creator").innerHTML).toContain("creator")
     expect(screen.getByTestId("roomname").innerHTML).toContain("roomname")
   })
 
   test("if axios resolves error", async () => {
+    const token = "token"
     mockedaxios.get.mockRejectedValueOnce(new Error("something went wrong"))
 
+    vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('token')
     render(<BrowserRouter><Audiorooms /></BrowserRouter>);
 
-    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms'))
+    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }))
     expect(screen.getByTestId("error").innerHTML).toContain("Error loading rooms. Please try again later.")
   })
 });
