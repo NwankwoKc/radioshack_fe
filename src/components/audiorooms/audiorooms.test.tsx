@@ -39,7 +39,7 @@ describe('<audiorooms />', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('token')
     render(<BrowserRouter><Audiorooms /></BrowserRouter>);
     const token = 'token'
-    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms', {
+    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('import.meta.env.VITE_BEURL/rooms', {
       headers: {
         'Authorization': `Bearer ${token}`
       }
@@ -56,7 +56,7 @@ describe('<audiorooms />', () => {
     vi.spyOn(Storage.prototype, 'getItem').mockReturnValue('token')
     render(<BrowserRouter><Audiorooms /></BrowserRouter>);
 
-    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms', {
+    await waitFor(() => expect(mockedaxios.get).toHaveBeenCalledWith('import.meta.env.VITE_BEURL/rooms', {
       headers: {
         'Authorization': `Bearer ${token}`
       }

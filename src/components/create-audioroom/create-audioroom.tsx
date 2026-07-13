@@ -26,7 +26,7 @@ function Createaudioroom() {
         }
         let passcreatorId: lsdata = JSON.parse(ls)
         let token = localStorage.getItem('token')
-        const response = await axios.post("https://radioshack-be.vercel.app/rooms/token", {
+        const response = await axios.post(`${import.meta.env.VITE_BEURL}/rooms/token`, {
           room_name: name,
           participant_identity: passcreatorId.id
         }, {
@@ -37,12 +37,12 @@ function Createaudioroom() {
 
         const freshToken = response.data.data;
         let dt = {
-          url: 'wss://radioshack-z35oydua.livekit.cloud',
+          url: import.meta.env.VITE_WSURL,
           token: freshToken
         }
         localStorage.setItem('data', JSON.stringify(dt))
         const room = new Room();
-        await room.connect('wss://radioshack-z35oydua.livekit.cloud', freshToken);
+        await room.connect(import.meta.env.VITE_WSURL, freshToken);
       } catch (err) {
         console.error("Token generation failed:", err);
       }
@@ -69,7 +69,7 @@ function Createaudioroom() {
 
     try {
       const token = localStorage.getItem('token')
-      const res = await axios.post('https://radioshack-be.vercel.app/rooms', data, {
+      const res = await axios.post(`${import.meta.env.VITE_BEURL}/rooms`, data, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

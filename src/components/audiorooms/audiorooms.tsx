@@ -10,7 +10,7 @@ function Audiorooms() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    axios.get('https://radioshack-be.vercel.app/rooms', {
+    axios.get(`${import.meta.env.VITE_BEURL}/rooms`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

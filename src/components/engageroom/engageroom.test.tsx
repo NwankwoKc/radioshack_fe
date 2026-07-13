@@ -113,7 +113,7 @@ describe('<engageroom />', () => {
     await waitFor(() => expect(screen.getByTestId('participants').innerHTML).toContain(`👥 ${3 + 1} participants`))
 
     expect(req).toHaveBeenCalled()
-    expect(req).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`, {
+    expect(req).toHaveBeenCalledWith(`import.meta.env.VITE_BEURL/rooms/${roomID}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
