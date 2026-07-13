@@ -1,75 +1,128 @@
-# React + TypeScript + Vite
+# RadioShack
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+RadioShack is a real-time audio room application (Clubhouse-style) built with React, TypeScript, and Vite. Users can create audio rooms, join existing rooms, and engage in live conversations.
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Project Structure](#project-structure)
+- [Components](#components)
+- [Environment Variables](#environment-variables)
+- [Getting Started](#getting-started)
+- [License](#license)
 
-## React Compiler
+## Project Structure
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+radioshack/
+├── public/                     # Static assets served as-is
+├── src/
+│   ├── assets/                 # Images, icons, fonts, and other static assets
+│   ├── components/              # All reusable and page-level React components
+│   │   ├── audiorooms/          # Displays list/grid of available audio rooms
+│   │   ├── bottomnavbar/        # Bottom navigation bar for mobile-style navigation
+│   │   ├── create-audioroom/    # Form/flow for creating a new audio room
+│   │   ├── engageroom/          # Active room UI (speakers, listeners, controls)
+│   │   ├── joinroom/            # Flow for joining an existing audio room
+│   │   ├── login/               # User login/authentication screen
+│   │   ├── profile/             # User profile view and edit screen
+│   │   ├── search/               # Search UI for rooms/users
+│   │   └── signup/               # User registration screen
+│   ├── shared/                  # Shared/common components used across features
+│   ├── util/                    # Utility/helper functions
+│   ├── App.css                  # Global app-level styles
+│   ├── App.tsx                  # Root application component
+│   ├── index.css                # Base/global CSS
+│   └── main.tsx                 # Application entry point
+├── LICENSE                      # MIT License
+├── README.md                    # Project documentation (this file)
+├── eslint.config.js             # ESLint configuration
+├── generate-react-cli.json      # Config for generate-react-cli component scaffolding
+├── index.html                   # HTML entry point
+├── package.json                 # Project dependencies and scripts
+└── package-lock.json            # Locked dependency versions
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Components
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Below is a breakdown of each component in `src/components/`. Add a screenshot for each by pasting an image URL in place of the placeholder link.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### AudioRooms
+Displays the list/grid of currently active or available audio rooms that a user can browse and join.
+
+![AudioRooms](./public/rooms.png)
+
+### BottomNavBar
+The persistent bottom navigation bar used to move between the app's main sections (e.g., Home, Search, Profile).
+
+![BottomNavBar](PASTE_IMAGE_URL_HERE)
+
+### Create Audio Room
+The form and flow a user goes through to create and configure a new audio room (title, topic, privacy settings, etc.).
+
+![Create Audio Room](./public/createroom.png)
+
+### Engage Room
+The core "in-room" experience — shows speakers, listeners, mic controls, and other live-room interactions.
+
+![Engage Room](./public/engageroom.png)
+
+### Join Room
+Handles the flow for a user joining an existing audio room, including any pre-join checks or prompts.
+
+![Join Room](./public/roominfo.png)
+
+### Login
+Authentication screen where existing users sign in to their account.
+
+![Login](./public/siginup.png)
+
+### Profile
+Displays and allows editing of the current user's profile information.
+
+![Profile](./public/profile.png)
+
+### Search
+Provides search functionality for finding rooms, topics, or other users.
+
+![Search](PASTE_IMAGE_URL_HERE)
+
+### Signup
+Registration screen for new users to create an account.
+
+![Signup](./public/signup.png)
+
+### Shared
+Common, reusable UI pieces (buttons, modals, inputs, etc.) shared across multiple components.
+
+![Shared Components](PASTE_IMAGE_URL_HERE)
+
+## Environment Variables
+
+Create a `.env` file in the project root with the following variables. Adjust names/values to match your actual backend, auth, and media providers.
+
+```env
+# API
+
+VITE_WSURL = "useyour livekit server url"
+VITE_BEURL =https://radioshack-be.vercel.app
+
 ```
+
+> **Note:** Never commit your `.env` file. Ensure it is listed in `.gitignore`.
+
+## Getting Started
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Build for production
+npm run build
+```
+
+## License
+
+This project is licensed under the **MIT License** — see the [LICENSE](./LICENSE) file for details.
