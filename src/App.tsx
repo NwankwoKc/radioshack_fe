@@ -37,6 +37,7 @@ function App() {
         <Routes>
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<Signup />} />
+          <Route path='/' element={<Signup />} />
 
           <Route element={<MainLayout />}>
             <Route path="/createroom" element={<Createaudioroom />} />
@@ -46,7 +47,6 @@ function App() {
             <Route path='/profile' element={<ProfileCard />} />
             <Route path='/search' element={<Search />} />
             <Route path='/record' element={<SimpleRecordButton />} />
-            <Route path='/' element={<Signup />} />
           </Route>
         </Routes>
       </BrowserRouter >
