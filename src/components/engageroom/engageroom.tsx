@@ -232,7 +232,7 @@ const EngagedRoom = () => {
                 className={`${styles.messageBubble} ${message.isOwn ? styles.messageOwn : styles.messageOther}`}
               >
                 <div className={styles.messageMeta}>
-                  <span>{message.sender}</span>
+                  <span className={`${message.isOwn ? styles.messageheaderown : styles.messageheaderother}`}>{message.sender}</span>
                 </div>
                 <div data-testid="textmessage" className={styles.messageText}>{message.text}</div>
               </div>
