@@ -71,7 +71,7 @@ const EngagedRoom = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    axios.get(`https://radioshack-be.vercel.app/rooms/${roomID}`, {
+    axios.get(`${import.meta.env.VITE_BEURL}/rooms/${roomID}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

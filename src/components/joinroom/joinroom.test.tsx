@@ -15,7 +15,13 @@ vi.mock('react-router', async () => {
   };
 });
 
-const mockGetItem = vi.fn().mockReturnValue('{"username":"username"}');
+const mockGetItem = vi.fn().mockImplementation((data: string) => {
+  if (data === "token") {
+    return "token"
+  } else {
+    return '{"username":"username"}'
+  }
+});
 const mockSetItem = vi.fn().mockImplementation((_firstval: string, _secondval: string) => true);
 const mockRemoveItem = vi.fn();
 Object.defineProperty(window, "localStorage", {
@@ -56,12 +62,20 @@ describe('getroom', () => {
     // Setup the mock
     vi.mocked(axios.get).mockResolvedValueOnce(mockResponse);
 
+    const token = 'token'
     // Test if mock works directly
-    const result = await axios.get('https://radioshack-be.vercel.app/rooms/123');
+    const result = await axios.get('import.meta.env.VITE_BEURL/rooms/123', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     console.log('Axios mock result:', result); // Should show your mockResponse
-
     // Verify the mock was called
-    expect(axios.get).toHaveBeenCalledWith('https://radioshack-be.vercel.app/rooms/123');
+    expect(axios.get).toHaveBeenCalledWith('import.meta.env.VITE_BEURL/rooms/123', {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
     expect(result).toEqual(mockResponse);
   });
   test('test if renders roominfo', async () => {
@@ -93,14 +107,18 @@ describe('getroom', () => {
       );
     })
     const { roomID } = useParams<{ roomID: string }>();
-
+    const token = "token"
     let name = await waitFor(() => screen.getByTestId('roomname'))
     let description = await waitFor(() => screen.getByTestId('description'))
     await waitFor(() => screen.getByTestId('isActive'))
 
     expect(name.innerHTML).toContain("roomname")
     expect(description.innerHTML).toContain("description")
-    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`)
+    expect(axios.get).toHaveBeenCalledWith(`import.meta.env.VITE_BEURL/rooms/${roomID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
   })
 });
 
@@ -148,6 +166,7 @@ describe('join room', () => {
     const { roomID } = useParams<{ roomID: string }>();
 
     const user = userEvent.setup()
+    const token = "token"
     let name = await waitFor(() => screen.getByTestId('roomname'))
     let description = await waitFor(() => screen.getByTestId('description'))
     await waitFor(() => screen.getByTestId('isActive'))
@@ -162,9 +181,13 @@ describe('join room', () => {
     expect(mockGetItem).toHaveBeenCalled()
     expect(mockGetItem).toHaveBeenCalledWith('Udata')
     expect(axios.post).toHaveBeenCalled()
-    expect(axios.post).toHaveBeenCalledWith("https://radioshack-be.vercel.app/rooms/token", {
+    expect(axios.post).toHaveBeenCalledWith("import.meta.env.VITE_BEURL/rooms/token", {
       room_name: mockuserreponse.roomname,
       participant_identity: uname
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
 
     await waitFor(() => expect(axios.post).toHaveResolved())
@@ -172,6 +195,10 @@ describe('join room', () => {
 
     expect(name.innerHTML).toContain("roomname")
     expect(description.innerHTML).toContain("description")
-    expect(axios.get).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`)
+    expect(axios.get).toHaveBeenCalledWith(`import.meta.env.VITE_BEURL/rooms/${roomID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
   })
 })

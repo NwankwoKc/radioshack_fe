@@ -70,6 +70,7 @@ describe('Createaudioroom Component', () => {
     mockLocalStorage.getItem.mockImplementation((key: string) => {
       if (key === 'Udata') return ls;
       if (key === 'data') return dt;
+      if (key === 'token') return "token"
       return null;
     });
   });
@@ -155,16 +156,18 @@ describe('Createaudioroom Component', () => {
   // Test 5: Successful form submission
   test('should submit form successfully and make API calls', async () => {
     mockedAxios.post.mockImplementation((url: string, _data: any) => {
-      if (url === "https://radioshack-be.vercel.app/rooms/token") {
+      if (url === "import.meta.env.VITE_BEURL/rooms") {
         return Promise.resolve({ data: { data: { id: "roomid" } } })
       } else {
         return Promise.resolve({ data: { success: true, data: "token" } })
       }
     })
 
+    const token = "token"
     render(
       <BrowserRouter><Createaudioroom /></BrowserRouter>
     );
+
     const user = userEvent.setup();
 
     const nameInput = screen.getByLabelText('Group Name');
@@ -179,11 +182,16 @@ describe('Createaudioroom Component', () => {
     // Verify first API call (create room) - this happens first in the component
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'https://radioshack-be.vercel.app/rooms',
+        'import.meta.env.VITE_BEURL/rooms',
         {
           roomname: 'My Room',
           creatorId: 'test-user-id',
           description: 'Room description'
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
         }
       );
     });
@@ -191,11 +199,15 @@ describe('Createaudioroom Component', () => {
     // Verify second API call (token generation) - this happens second in the component
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'https://radioshack-be.vercel.app/rooms/token',
+        'import.meta.env.VITE_BEURL/rooms/token',
         {
           room_name: 'My Room',
           participant_identity: 'test-user-id'
+        }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
         }
+      }
       );
     });
 
@@ -219,16 +231,24 @@ describe('Createaudioroom Component', () => {
 
     const nameInput = screen.getByLabelText('Group Name');
     await user.type(nameInput, 'Room Only');
-
+    const token = "token"
     const submitButton = screen.getByRole('button', { name: /create room/i });
     await user.click(submitButton);
 
     await waitFor(() => {
       expect(mockedAxios.post).toHaveBeenCalledWith(
-        'https://radioshack-be.vercel.app/rooms',
+        'import.meta.env.VITE_BEURL/rooms',
         expect.objectContaining({
           description: '',
-        })
+          roomname: "Room Only",
+          creatorId: "test-user-id"
+        }),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+
+        }
       );
     });
   });
@@ -237,7 +257,7 @@ describe('Createaudioroom Component', () => {
   test('should handle API error during room creation', async () => {
     const errorMessage = 'Network Error';
     mockedAxios.post.mockImplementation((url: string, _data: any) => {
-      if (url === 'https://radioshack-be.vercel.app/rooms') {
+      if (url === 'import.meta.env.VITE_BEURL/rooms') {
         return Promise.reject(new Error(errorMessage))
       } else {
         return Promise.reject(new Error(errorMessage))

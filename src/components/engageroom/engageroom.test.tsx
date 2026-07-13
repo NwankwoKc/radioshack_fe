@@ -56,7 +56,13 @@ vi.mock('react-router', () => ({
   useParams: vi.fn().mockReturnValue({ roomID: "1234" })
 }));
 
-const mockGetItem = vi.fn().mockReturnValue('{"url":"url","token":"token"}');
+const mockGetItem = vi.fn().mockImplementation((data: string) => {
+  if (data === "token") {
+    return "token"
+  } else {
+    return '{"url":"url","token":"token"}'
+  }
+})
 const mockSetItem = vi.fn();
 const mockRemoveItem = vi.fn();
 Object.defineProperty(window, "localStorage", {
@@ -101,12 +107,17 @@ describe('<engageroom />', () => {
         }
       }
     })
+    const token = "token"
     render(<Engageroom />);
 
     await waitFor(() => expect(screen.getByTestId('participants').innerHTML).toContain(`👥 ${3 + 1} participants`))
 
     expect(req).toHaveBeenCalled()
-    expect(req).toHaveBeenCalledWith(`https://radioshack-be.vercel.app/rooms/${roomID}`)
+    expect(req).toHaveBeenCalledWith(`import.meta.env.VITE_BEURL/rooms/${roomID}`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
   })
   test('if chatbox is working correctly', async () => {
 

@@ -33,7 +33,7 @@ export default function ProfileCard() {
     }
     id = JSON.parse(id).id
     console.log(id)
-    axios.get(`https://radioshack-be.vercel.app/users/${id}`, {
+    axios.get(`${import.meta.env.VITE_BEURL}/users/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
