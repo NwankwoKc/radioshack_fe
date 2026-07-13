@@ -12,12 +12,16 @@ import { Outlet, useLocation } from 'react-router'
 import BottomNavBar from './components/bottomnavbar/bottomnavbar.tsx'
 import Search from './components/search/search.tsx'
 import ProfileCard from './components/profile/profile.tsx'
-
+import { useEffect } from 'react'
 
 function MainLayout() {
   const location = useLocation();
   const hideNav = ['/login', '/signup'].includes(location.pathname);
-
+  // Debug logging
+  useEffect(() => {
+    console.log('Current path:', location.pathname);
+    console.log('Should hide nav:', hideNav);
+  }, [location, hideNav]);
   return (
     <div>
       {!hideNav && <BottomNavBar />}
@@ -31,8 +35,10 @@ function App() {
     <LiveKitProvider>
       <BrowserRouter>
         <Routes>
-          <Route element={<MainLayout />}>
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<Signup />} />
 
+          <Route element={<MainLayout />}>
             <Route path="/createroom" element={<Createaudioroom />} />
             <Route path='/rooms/:roomID' element={<Joinroom />} />
             <Route path='/rooms' element={<Audiorooms />} />
@@ -42,9 +48,6 @@ function App() {
             <Route path='/record' element={<SimpleRecordButton />} />
             <Route path='/' element={<Signup />} />
           </Route>
-
-          <Route path='/login' element={<Login />} />
-          <Route path='/signup' element={<Signup />} />
         </Routes>
       </BrowserRouter >
     </LiveKitProvider>
