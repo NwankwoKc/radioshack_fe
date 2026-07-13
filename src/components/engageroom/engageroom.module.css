@@ -299,6 +299,7 @@ span{
   background: black;
   border: 1px solid #e5e7eb;
   align-self: flex-start;
+  color: white;
 }
 
 .messageMeta {
@@ -308,7 +309,12 @@ span{
   margin-bottom: 0.25rem;
   opacity: 0.8;
 }
-
+.messageheaderown{
+  color: black;
+}
+.messageheaderother{
+  color:white
+}
 .messageText {
   font-size: 0.85rem;
   word-wrap: break-word;
