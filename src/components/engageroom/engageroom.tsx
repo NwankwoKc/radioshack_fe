@@ -110,8 +110,14 @@ const EngagedRoom = () => {
       setallparticipants((prevMap) => new Map(prevMap.set(participants.identity, participants.identity)))
     });
     room.on(RoomEvent.ParticipantDisconnected, (particpants) => {
-      allparticipants.delete(particpants.identity)
-      console.log(`User left${particpants.identity}`)
+      setallparticipants(prevMap => {
+        const newMap = new Map(prevMap);
+        const wasDeleted = newMap.delete(particpants.identity);
+        if (wasDeleted) {
+          return prevMap;
+        }
+        return newMap;
+      });
     })
 
     room.on(RoomEvent.DataReceived, (payload) => {
