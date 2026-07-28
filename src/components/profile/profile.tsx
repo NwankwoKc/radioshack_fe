@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './profile.module.css';
-import axios from 'axios';
+import instance from '../../util/axios';
 
 export interface Group {
   id: string;
@@ -33,7 +33,7 @@ export default function ProfileCard() {
     }
     id = JSON.parse(id).id
     console.log(id)
-    axios.get(`${import.meta.env.VITE_BEURL}/users/${id}`, {
+    instance.get(`${import.meta.env.VITE_BEURL}/users/${id}`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
