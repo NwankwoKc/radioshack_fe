@@ -97,11 +97,6 @@ const EngagedRoom = () => {
       );
 
       setActiveSpeakers(activeSpeakerIds);
-
-      // Log each active speaker
-      speakers.forEach(speaker => {
-
-      });
     };
 
     const handleParticipantConnected = (participant: RemoteParticipant) => {
