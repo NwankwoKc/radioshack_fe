@@ -215,15 +215,17 @@ const EngagedRoom = () => {
               {participants?.map(user => {
                 const isSpeaking = activeSpeakers.has(user.identity);
                 return (
-                  <div key={user.sid} className={styles.userCard}>
+                  <div key={user.sid} className={`${styles.userCard} ${isSpeaking ? styles.userCardSpeaking : ''} `}>
                     <div className={styles.userAvatar}>👥</div>
                     <div className={styles.userInfo}>
                       <div className={styles.userName}>{user.identity || 'Anonymous'}</div>
                     </div>
                     {isSpeaking && (
-                      <span className={styles.speakingIndicator}>
-                        🔊 {user.identity} is speaking
-                      </span>
+                      <div className={styles.volumeBars}>
+                        <span className={styles.bar}></span>
+                        <span className={styles.bar}></span>
+                        <span className={styles.bar}></span>
+                      </div>
                     )}
                   </div>
                 );
@@ -247,7 +249,7 @@ const EngagedRoom = () => {
             {messages.map(message => (
               <div
                 key={message.id}
-                className={`${styles.messageBubble} ${message.isOwn ? styles.messageOwn : styles.messageOther}`}
+                className={`${styles.messageBubble} ${message.isOwn ? styles.messageOwn : styles.messageOther} `}
               >
                 <div className={styles.messageMeta}>
                   <span>{message.sender}</span>
