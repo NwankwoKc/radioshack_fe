@@ -181,6 +181,59 @@ span{
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
+.userCardSpeaking {
+  border: 1px solid #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15), 0 4px 12px rgba(34, 197, 94, 0.15);
+  animation: speakingPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes speakingPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15), 0 4px 12px rgba(34, 197, 94, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(34, 197, 94, 0.05), 0 4px 16px rgba(34, 197, 94, 0.25);
+  }
+}
+
+/* Volume bars replacing the old text indicator */
+.volumeBars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 18px;
+  margin-left: auto;
+}
+
+.bar {
+  width: 3px;
+  background: #22c55e;
+  border-radius: 2px;
+  animation: barBounce 0.8s ease-in-out infinite;
+}
+
+.bar:nth-child(1) {
+  height: 40%;
+  animation-delay: 0s;
+}
+.bar:nth-child(2) {
+  height: 100%;
+  animation-delay: 0.15s;
+}
+.bar:nth-child(3) {
+  height: 60%;
+  animation-delay: 0.3s;
+}
+
+@keyframes barBounce {
+  0%, 100% {
+    transform: scaleY(0.4);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
 .userAvatar {
   width: 40px;
   height: 40px;

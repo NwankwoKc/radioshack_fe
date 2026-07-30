@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useParams } from "react-router";
 import { useEffect, useState } from "react";
 import styles from "./joinroom.module.css";
 import { useNavigate } from "react-router";
 import type { logindata } from "../../shared/usertype";
+import instance from "../../util/axios";
 interface Roominterface {
   _id: string;
   id?: string;
@@ -32,7 +32,7 @@ function Joinroom() {
       try {
         setLoading(true);
         const token = localStorage.getItem('token')
-        const response = await axios.get(`${import.meta.env.VITE_BEURL}/rooms/${roomID}`, {
+        const response = await instance.get(`${import.meta.env.VITE_BEURL}/rooms/${roomID}`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -71,7 +71,7 @@ function Joinroom() {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
       const token = localStorage.getItem('token')
-      const response = await axios.post(`${import.meta.env.VITE_BEURL}/rooms/token`, {
+      const response = await instance.post(`${import.meta.env.VITE_BEURL}/rooms/token`, {
         room_name: roomname,
         participant_identity: uname
       }, {

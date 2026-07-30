@@ -1,8 +1,8 @@
 import { useState } from "react";
-import axios from "axios";
 import { Room } from "livekit-client"
 import styles from "./create-audioroom.module.css";
 import { useNavigate } from "react-router";
+import instance from "../../util/axios";
 type lsdata = {
   username: string,
   id: string
@@ -26,7 +26,7 @@ function Createaudioroom() {
         }
         let passcreatorId: lsdata = JSON.parse(ls)
         let token = localStorage.getItem('token')
-        const response = await axios.post(`${import.meta.env.VITE_BEURL}/rooms/token`, {
+        const response = await instance.post(`${import.meta.env.VITE_BEURL}/rooms/token`, {
           room_name: name,
           participant_identity: passcreatorId.id
         }, {
@@ -69,7 +69,7 @@ function Createaudioroom() {
 
     try {
       const token = localStorage.getItem('token')
-      const res = await axios.post(`${import.meta.env.VITE_BEURL}/rooms`, data, {
+      const res = await instance.post(`${import.meta.env.VITE_BEURL}/rooms`, data, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

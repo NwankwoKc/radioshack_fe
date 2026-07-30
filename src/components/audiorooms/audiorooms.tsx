@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import axios from "axios";
 import { useState, useEffect } from "react";
 import styles from './audiorooms.module.css';
+import instance from "../../util/axios";
 
 function Audiorooms() {
   const [data, setdata] = useState<any[]>([]);
@@ -10,7 +10,7 @@ function Audiorooms() {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    axios.get(`${import.meta.env.VITE_BEURL}/rooms`, {
+    instance.get(`${import.meta.env.VITE_BEURL}/rooms`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
 import styles from './engageroom.module.css';
-import axios from 'axios';
 import { useParams } from 'react-router';
-import { createLocalAudioTrack, LocalAudioTrack, RemoteTrack, Room, RoomEvent } from 'livekit-client';
+import { createLocalAudioTrack, LocalAudioTrack, Participant, RemoteTrack, Room, RoomEvent, RemoteParticipant } from 'livekit-client';
 import { Track } from 'livekit-client'
 import type { logindata } from '../../shared/usertype';
+import instance from '../../util/axios';
 
 interface Message {
   id: string;
@@ -24,15 +24,16 @@ const EngagedRoom = () => {
   const audioRef = useRef<HTMLMediaElement>(null)
   const audioTrackRef = useRef<LocalAudioTrack | null>(null)
   const [isMuted, setIsMuted] = useState(false);
-  const [allparticipants, setallparticipants] = useState<Map<string, string>>(new Map())
-  const ndt = useMemo(() => {
+  const [activeSpeakers, setActiveSpeakers] = useState<Set<string>>(new Set()); // Use Set for better tracking
+  const [participants, setParticipants] = useState<RemoteParticipant[]>([])
+  const parsedata = useMemo(() => {
     const dt = localStorage.getItem('data');
     if (!dt) return null;
     return JSON.parse(dt);
   }, []);
 
   const [users, setUsers] = useState<any[]>([]);
-  const [creator, setcreator] = useState<string>("")
+  const [creator, setCreator] = useState<string>("")
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -68,59 +69,53 @@ const EngagedRoom = () => {
     setInputMessage('');
   };
 
-
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    axios.get(`${import.meta.env.VITE_BEURL}/rooms/${roomID}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    }).then((el) => {
+    instance.get(`${import.meta.env.VITE_BEURL}/${roomID}`).then((el) => {
       const members = el.data.data.members;
       const creator = el.data.data.creator.username
-      setcreator(creator)
+      setCreator(creator)
       setUsers([...members, creator]);
     });
 
     async function connect() {
-      if (!ndt) {
+      if (!parsedata) {
         console.error('No connection data found in localStorage');
         return;
       }
-      await room.connect(ndt.url, ndt.token);
-      // After await room.connect()
-      let part: Array<string> = []
-      room.remoteParticipants.forEach((_participant, identity) => {
-        part.push(identity)
-        setallparticipants((prevMap) => (prevMap.set(identity, identity)))
-        console.log(allparticipants)
-      });
-
-
+      await room.connect(parsedata.url, parsedata.token);
       const audioTrack = await createLocalAudioTrack();
       audioTrackRef.current = audioTrack
       await room.localParticipant.publishTrack(audioTrack)
     }
 
-    room.on(RoomEvent.TrackSubscribed, handleTrackSubscribe);
-    room.on(RoomEvent.TrackUnsubscribed, handleTrackDetach);
-    connect();
-    room.on(RoomEvent.ParticipantConnected, (participants) => {
-      console.log(`User joined: ${participants.identity}`);
-      setallparticipants((prevMap) => new Map(prevMap.set(participants.identity, participants.identity)))
-    });
-    room.on(RoomEvent.ParticipantDisconnected, (particpants) => {
-      setallparticipants(prevMap => {
-        const newMap = new Map(prevMap);
-        const wasDeleted = newMap.delete(particpants.identity);
-        if (wasDeleted) {
-          return prevMap;
-        }
-        return newMap;
-      });
-    })
+    // Handler functions that use refs or useCallback to avoid stale closures
+    const handleActiveSpeakersChanged = (speakers: Participant[]) => {
 
-    room.on(RoomEvent.DataReceived, (payload) => {
+      // Create a Set of speaker identities for efficient lookup
+      const activeSpeakerIds = new Set(
+        speakers.map(speaker => speaker.identity)
+      );
+
+      setActiveSpeakers(activeSpeakerIds);
+    };
+
+    const handleParticipantConnected = (participant: RemoteParticipant) => {
+      setParticipants(prev => [...prev, participant]);
+    };
+
+    const handleTrackSubscribed = (track: RemoteTrack) => {
+      if (track.kind === Track.Kind.Audio) {
+        if (audioRef.current) track.attach(audioRef.current);
+      }
+    };
+
+    const handleTrackUnsubscribed = (track: RemoteTrack) => {
+      if (track.kind === Track.Kind.Audio && audioRef.current) {
+        track.detach(audioRef.current);
+      }
+    };
+
+    const handleDataReceived = (payload: any) => {
       const decoder = new TextDecoder();
       try {
         let message: Message = JSON.parse(decoder.decode(payload));
@@ -130,30 +125,40 @@ const EngagedRoom = () => {
           sender: message.name
         }
         setMessages(prev => [...prev, message]);
-        console.log(message)
       } catch (e) {
         console.error('Failed to parse incoming message', e);
       }
-    });
+    };
 
+    // Register event listeners
+    room.on(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+    room.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
+    room.on(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakersChanged);
+    room.on(RoomEvent.ParticipantConnected, handleParticipantConnected);
+    room.on(RoomEvent.DataReceived, handleDataReceived);
+
+    // Connect to room
+    connect();
+
+    // Get initial participants
+    const allMembers = Array.from(room.remoteParticipants.values());
+    setParticipants(allMembers);
+
+    // Cleanup
     return () => {
-      audioTrackRef.current?.stop()
+      // Remove event listeners
+      room.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
+      room.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
+      room.off(RoomEvent.ActiveSpeakersChanged, handleActiveSpeakersChanged);
+      room.off(RoomEvent.ParticipantConnected, handleParticipantConnected);
+      room.off(RoomEvent.DataReceived, handleDataReceived);
+
+      audioTrackRef.current?.stop();
       room.disconnect();
     };
-  }, []);
+  }, [room, parsedata, roomID]); // Add dependencies
 
-  function handleTrackSubscribe(track: RemoteTrack) {
-    if (track.kind === Track.Kind.Audio) {
-      if (audioRef.current) track.attach(audioRef.current);
-    }
-  }
-
-  function handleTrackDetach(track: RemoteTrack) {
-    if (track.kind === Track.Kind.Audio && audioRef.current) {
-      track.detach(audioRef.current);
-    }
-  }
-  function hanldeTrackMute() {
+  function handleTrackMute() {
     if (audioTrackRef?.current?.isMuted) {
       audioTrackRef.current.unmute()
       setIsMuted(false)
@@ -202,20 +207,29 @@ const EngagedRoom = () => {
               <div className={styles.userCard}>
                 <div className={styles.userAvatar}>👥</div>
                 <div className={styles.userInfo}>
-                  <div className={styles.userName}></div>
                   <div className={styles.userName}>{creator}</div>
                 </div>
+                {/* Check if creator is speaking - you might want to track this too */}
               </div>
 
-              {Array.from(allparticipants, ([_id, user]) => (
-                <div className={styles.userCard}>
-                  <div className={styles.userAvatar}>👥</div>
-                  <div className={styles.userInfo}>
-                    <div className={styles.userName}></div>
-                    <div className={styles.userName}>{user}</div>
+              {participants?.map(user => {
+                const isSpeaking = activeSpeakers.has(user.identity);
+                return (
+                  <div key={user.sid} className={`${styles.userCard} ${isSpeaking ? styles.userCardSpeaking : ''} `}>
+                    <div className={styles.userAvatar}>👥</div>
+                    <div className={styles.userInfo}>
+                      <div className={styles.userName}>{user.identity || 'Anonymous'}</div>
+                    </div>
+                    {isSpeaking && (
+                      <div className={styles.volumeBars}>
+                        <span className={styles.bar}></span>
+                        <span className={styles.bar}></span>
+                        <span className={styles.bar}></span>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
@@ -227,7 +241,7 @@ const EngagedRoom = () => {
           </div>
           <button
             className={`${styles.micButton} ${isMuted ? styles.muted : styles.active}`}
-            onClick={hanldeTrackMute}
+            onClick={handleTrackMute}
           >
             {isMuted ? '🔇 Unmute mic' : '🎤 Mute mic'}
           </button>
@@ -235,19 +249,17 @@ const EngagedRoom = () => {
             {messages.map(message => (
               <div
                 key={message.id}
-                className={`${styles.messageBubble} ${message.isOwn ? styles.messageOwn : styles.messageOther}`}
+                className={`${styles.messageBubble} ${message.isOwn ? styles.messageOwn : styles.messageOther} `}
               >
                 <div className={styles.messageMeta}>
-                  <span className={`${message.isOwn ? styles.messageheaderown : styles.messageheaderother}`}>{message.sender}</span>
+                  <span>{message.sender}</span>
                 </div>
                 <div data-testid="textmessage" className={styles.messageText}>{message.text}</div>
               </div>
             ))}
             <div ref={chatEndRef} />
           </div>
-          <audio ref={audioRef}
-            autoPlay
-            controls={false} />
+          <audio ref={audioRef} autoPlay controls={false} />
           <div className={styles.chatInputContainer}>
             <input
               data-testid="inputmessage"
