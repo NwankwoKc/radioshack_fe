@@ -70,7 +70,7 @@ const EngagedRoom = () => {
   };
 
   useEffect(() => {
-    instance.get(`${import.meta.env.VITE_BEURL}/${roomID}`).then((el) => {
+    instance.get(`${import.meta.env.VITE_BEURL}/rooms/${roomID}`).then((el) => {
       const members = el.data.data.members;
       const creator = el.data.data.creator.username
       setCreator(creator)

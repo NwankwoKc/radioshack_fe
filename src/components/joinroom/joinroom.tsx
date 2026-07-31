@@ -40,7 +40,7 @@ function Joinroom() {
         });
         console.log(response.data)
         creatorid = response.data.data.creatorid;
-        console.log("creatorid", creatorid)
+        console.log("creatorid", response.data.data.creator.id)
         // Handle both single room and array responses
         const roomData = Array.isArray(response.data.data)
           ? response.data.data

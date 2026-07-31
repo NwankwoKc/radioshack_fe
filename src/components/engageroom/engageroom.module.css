@@ -570,13 +570,3 @@ span{
 .micButton:active {
   transform: translateY(0);
 }
-.mute-btn {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #6b4423;
-  color: white;
-  border: none;
-  font-size: 10px;
-  cursor: pointer;
-}
