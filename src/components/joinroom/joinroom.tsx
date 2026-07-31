@@ -1,9 +1,10 @@
 import { useParams } from "react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import styles from "./joinroom.module.css";
 import { useNavigate } from "react-router";
 import type { logindata } from "../../shared/usertype";
 import instance from "../../util/axios";
+
 interface Roominterface {
   _id: string;
   id?: string;
@@ -24,8 +25,15 @@ function Joinroom() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [joiningRoom, setJoiningRoom] = useState<string | null>(null);
+  const [admin, setadmin] = useState<boolean>(false)
+  const usrdata = useMemo(() => {
+    let dt = localStorage.getItem("Udata")
+    if (dt)
+      return JSON.parse(dt)
+  }, [])
 
   const { roomID } = useParams<{ roomID: string }>();
+  let creatorid: string = ""
   const navigate = useNavigate()
   useEffect(() => {
     const fetchRoomDetails = async () => {
@@ -37,13 +45,14 @@ function Joinroom() {
             'Authorization': `Bearer ${token}`
           }
         });
-        console.log(response.data)
-
+        if (response.data.data.creator.id == usrdata.id) {
+          setadmin(true)
+        }
+        console.log(admin)
         // Handle both single room and array responses
         const roomData = Array.isArray(response.data.data)
           ? response.data.data
           : [response.data.data];
-
         setData(roomData);
         setError(null);
       } catch (err) {
@@ -67,6 +76,8 @@ function Joinroom() {
     if (!name) return;
     let objectname: logindata = JSON.parse(name)
     let uname = JSON.stringify(objectname?.username)
+    let id = JSON.stringify(objectname?.id)
+
     try {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
@@ -82,13 +93,21 @@ function Joinroom() {
 
       const freshToken = response.data.data;
 
-      console.log(`Joining room: ${roomId}`);
       let dt = {
         url: import.meta.env.VITE_WSURL,
         token: freshToken
       }
       localStorage.setItem('data', JSON.stringify(dt))
-      navigate(`/engageroom/${roomId}`)
+      console.log({
+        "creatorid": creatorid,
+        "id": id
+      })
+      console.log(admin)
+      if (admin) {
+        navigate(`/admin-engagedroom/${roomId}`)
+      } else {
+        navigate(`/engageroom/${roomId}`)
+      }
 
     } catch (err) {
       console.error(`Failed to join room: ${err}`);

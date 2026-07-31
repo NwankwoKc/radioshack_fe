@@ -1,13 +1,12 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import styles from './audiorooms.module.css';
 import instance from "../../util/axios";
-
 function Audiorooms() {
   const [data, setdata] = useState<any[]>([]);
   const [error, seterr] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  let navigate = useNavigate()
   useEffect(() => {
     const token = localStorage.getItem('token')
     instance.get(`${import.meta.env.VITE_BEURL}/rooms`, {
@@ -34,10 +33,19 @@ function Audiorooms() {
   if (error) {
     return <div data-testid="error" className="error">Error loading rooms. Please try again later.</div>;
   }
+  function handleCreateRoom() {
+    navigate("/createroom");
+  }
 
   return (
     <div className={styles.audioRoomsContainer}>
-      <h2 className={styles.roomsTitle}>Audio Rooms</h2>
+      <div className={styles.roomsHeader}>
+        <h2 className={styles.roomsTitle}>Audio Rooms</h2>
+        <button className={styles.createRoomButton} onClick={handleCreateRoom}>
+          <span className={styles.plusIcon}>+</span>
+          Create Room
+        </button>
+      </div>
       <div className={styles.roomsGrid}>
         {data.map((room) => (
           <div className={styles.roomCard} key={room.id || room._id}>

@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
-import styles from './engageroom.module.css';
-import { useParams } from 'react-router';
-import { createLocalAudioTrack, LocalAudioTrack, Participant, RemoteTrack, Room, RoomEvent, RemoteParticipant } from 'livekit-client';
+import styles from "../engageroom/engageroom.module.css"
+import { useRef, useEffect, useMemo, useState } from "react"
+import { createLocalAudioTrack, LocalAudioTrack, Participant, RemoteTrack, Room, RoomEvent, RemoteParticipant, RemoteTrackPublication } from 'livekit-client';
 import { Track } from 'livekit-client'
 import type { logindata } from '../../shared/usertype';
 import instance from '../../util/axios';
+import { useParams } from 'react-router';
 
 interface Message {
   id: string;
@@ -15,7 +15,8 @@ interface Message {
   name: string
 }
 
-const EngagedRoom = () => {
+
+function Adm_engageroom() {
   const { roomID } = useParams<{ roomID: string }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -70,12 +71,13 @@ const EngagedRoom = () => {
   };
 
   useEffect(() => {
-    instance.get(`${import.meta.env.VITE_BEURL}/rooms/${roomID}`).then((el) => {
+    instance.get(`${import.meta.env.VITE_BEURL}/${roomID}`).then((el) => {
       const members = el.data.data.members;
       const creator = el.data.data.creator.username
       setCreator(creator)
       setUsers([...members, creator]);
-    });
+    }
+    );
 
     async function connect() {
       if (!parsedata) {
@@ -143,6 +145,7 @@ const EngagedRoom = () => {
     // Get initial participants
     const allMembers = Array.from(room.remoteParticipants.values());
     setParticipants(allMembers);
+    console.log(room.name)
 
     // Cleanup
     return () => {
@@ -167,11 +170,38 @@ const EngagedRoom = () => {
       setIsMuted(true)
     }
   }
+  function getracksid() {
+    let tsid;
+    participants.map((el: RemoteParticipant) => {
+      el.trackPublications.forEach((el: RemoteTrackPublication) => {
+        tsid = el.trackSid
+      })
+    })
+
+    return tsid
+  }
+
+  function muteparticipant(identity: string) {
+    const tracksid = getracksid()
+    const body = {
+      roomName: room.name,
+      identity: identity,
+      tracksid: tracksid,
+      muted: true
+    }
+    console.log(body)
+
+    instance.post(`${import.meta.env.VITE_BEURL}/rooms/mute`, body)
+  }
+
+
+
+
 
   return (
     <div className={styles.joinRoomContainer}>
       <div className={styles.engagedRoomLayout}>
-        <div className={styles.roomMainArea}>
+        <div className={styles.roomMainAreas}>
           <div className={styles.roomHeader}>
             <div className={styles.roomTitleSection}>
               <span className={styles.roomName}>🌿 Creative Collab · Engaged Studio</span>
@@ -227,6 +257,8 @@ const EngagedRoom = () => {
                         <span className={styles.bar}></span>
                       </div>
                     )}
+                    <button className={styles.mutebtn} onClick={(_e) => muteparticipant(user.identity)}>Mute</button>
+
                   </div>
                 );
               })}
@@ -277,7 +309,11 @@ const EngagedRoom = () => {
         </div>
       </div>
     </div>
-  );
-};
 
-export default EngagedRoom;
+  )
+}
+
+
+export default Adm_engageroom
+
+

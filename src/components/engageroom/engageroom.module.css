@@ -27,6 +27,19 @@
   padding: 1.5rem;
 }
 
+.roomMainAreas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+}
+
+
 /* Room Header */
 .roomHeader {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -556,4 +569,15 @@ span{
 
 .micButton:active {
   transform: translateY(0);
+}
+
+.mutebtn {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #6b4423;
+  color: white;
+  border: none;
+  font-size: 10px;
+  cursor: pointer;
 }
