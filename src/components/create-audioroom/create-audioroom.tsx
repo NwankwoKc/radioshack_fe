@@ -79,7 +79,7 @@ function Createaudioroom() {
       setloading(false);
       setname('');
       setdescription('')
-      navigate(`/engageroom/${id}`)
+      navigate(`/admin-engagedroom/${id}`)
 
     } catch (err: any) {
       seterror(err.message);

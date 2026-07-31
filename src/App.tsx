@@ -12,16 +12,11 @@ import { Outlet, useLocation } from 'react-router'
 import BottomNavBar from './components/bottomnavbar/bottomnavbar.tsx'
 import Search from './components/search/search.tsx'
 import ProfileCard from './components/profile/profile.tsx'
-import { useEffect } from 'react'
 import Adm_engageroom from './components/adm_engageroom/adm_engageroom.tsx'
 function MainLayout() {
   const location = useLocation();
   const hideNav = ['/login', '/signup'].includes(location.pathname);
   // Debug logging
-  useEffect(() => {
-    console.log('Current path:', location.pathname);
-    console.log('Should hide nav:', hideNav);
-  }, [location, hideNav]);
   return (
     <div>
       {!hideNav && <BottomNavBar />}
