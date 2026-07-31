@@ -13,7 +13,7 @@ import BottomNavBar from './components/bottomnavbar/bottomnavbar.tsx'
 import Search from './components/search/search.tsx'
 import ProfileCard from './components/profile/profile.tsx'
 import { useEffect } from 'react'
-
+import Adm_engageroom from './components/adm_engageroom/adm_engageroom.tsx'
 function MainLayout() {
   const location = useLocation();
   const hideNav = ['/login', '/signup'].includes(location.pathname);
@@ -44,6 +44,7 @@ function App() {
             <Route path='/rooms/:roomID' element={<Joinroom />} />
             <Route path='/rooms' element={<Audiorooms />} />
             <Route path='/engageroom/:roomID' element={<EngagedRoom />} />
+            <Route path='/admin-engagedroom/:roomID' element={<Adm_engageroom />} />
             <Route path='/profile' element={<ProfileCard />} />
             <Route path='/search' element={<Search />} />
             <Route path='/record' element={<SimpleRecordButton />} />

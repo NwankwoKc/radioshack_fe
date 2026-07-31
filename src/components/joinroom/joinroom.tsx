@@ -26,6 +26,7 @@ function Joinroom() {
   const [joiningRoom, setJoiningRoom] = useState<string | null>(null);
 
   const { roomID } = useParams<{ roomID: string }>();
+  let creatorid: string = ""
   const navigate = useNavigate()
   useEffect(() => {
     const fetchRoomDetails = async () => {
@@ -38,12 +39,12 @@ function Joinroom() {
           }
         });
         console.log(response.data)
-
+        creatorid = response.data.data.creatorid;
+        console.log("creatorid", creatorid)
         // Handle both single room and array responses
         const roomData = Array.isArray(response.data.data)
           ? response.data.data
           : [response.data.data];
-
         setData(roomData);
         setError(null);
       } catch (err) {
@@ -67,6 +68,8 @@ function Joinroom() {
     if (!name) return;
     let objectname: logindata = JSON.parse(name)
     let uname = JSON.stringify(objectname?.username)
+    let id = JSON.stringify(objectname?.id)
+
     try {
       setJoiningRoom(roomId);
       let roomname = data[0].roomname
@@ -88,7 +91,11 @@ function Joinroom() {
         token: freshToken
       }
       localStorage.setItem('data', JSON.stringify(dt))
-      navigate(`/engageroom/${roomId}`)
+      if (id == creatorid) {
+        navigate(`/admin-engagedroom/${roomId}`)
+      } else {
+        navigate(`/engageroom/${roomId}`)
+      }
 
     } catch (err) {
       console.error(`Failed to join room: ${err}`);
