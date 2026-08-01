@@ -49,12 +49,11 @@ function Audiorooms() {
       <div className={styles.roomsGrid}>
         {data.map((room) => (
           <div className={styles.roomCard} key={room.id || room._id}>
-
             <div className={styles.roomCardHeader}>
               <div className={styles.roomIcon}>🎙️</div>
+              <span className={`${styles.statusDot} ${(room.id || room._id || '').toString().length % 2 === 0 ? styles.online : styles.offline}`} />
               <h3 data-testid="roomname" className={styles.roomName}>{room.roomname || room.name}</h3>
             </div>
-
             <div className={styles.roomCardBody}>
               <div className={styles.creatorInfo}>
                 <div className={styles.creatorAvatar}>

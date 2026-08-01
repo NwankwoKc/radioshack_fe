@@ -263,3 +263,22 @@
     gap: 1rem;
   }
 }
+
+/* the online status */
+.statusDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  flex-shrink: 0;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.statusDot.online {
+  background: #22c55e;
+}
+
+.statusDot.offline {
+  background: #ef4444;
+}
