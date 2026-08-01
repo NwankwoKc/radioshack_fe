@@ -104,6 +104,10 @@ function Joinroom() {
       })
       console.log(admin)
       if (admin) {
+        await instance.patch(`${import.meta.env.VITE_BEURL}/rooms/active`, {
+          id: roomID,
+          isActive: true
+        })
         navigate(`/admin-engagedroom/${roomId}`)
       } else {
         navigate(`/engageroom/${roomId}`)

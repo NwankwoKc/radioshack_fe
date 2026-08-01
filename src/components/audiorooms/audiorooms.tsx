@@ -51,7 +51,7 @@ function Audiorooms() {
           <div className={styles.roomCard} key={room.id || room._id}>
             <div className={styles.roomCardHeader}>
               <div className={styles.roomIcon}>🎙️</div>
-              <span className={`${styles.statusDot} ${(room.id || room._id || '').toString().length % 2 === 0 ? styles.online : styles.offline}`} />
+              <span className={`${styles.statusDot} ${room.isActive == true ? styles.online : styles.offline}`} />
               <h3 data-testid="roomname" className={styles.roomName}>{room.roomname || room.name}</h3>
             </div>
             <div className={styles.roomCardBody}>
@@ -61,7 +61,7 @@ function Audiorooms() {
                 </div>
                 <div className={styles.creatorDetails}>
                   <span className={styles.creatorLabel}>Created by</span>
-                  <span data-testid="creator" className={styles.creatorName}>{room.creator || 'Unknown'}</span>
+                  <span data-testid="creator" className={styles.creatorName}>{room.creator || 'Anonymous'}</span>
                 </div>
               </div>
 

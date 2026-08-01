@@ -79,6 +79,12 @@ function Adm_engageroom() {
     }
     );
 
+    const handlebeforeonload = () => {
+      navigator.sendBeacon(`${import.meta.env.VITE_BEURL}/rooms/active`, JSON.stringify({
+        isActive: false
+      }))
+    }
+    window.addEventListener("beforeunload", handlebeforeonload)
     async function connect() {
       if (!parsedata) {
         console.error('No connection data found in localStorage');
@@ -149,6 +155,8 @@ function Adm_engageroom() {
 
     // Cleanup
     return () => {
+      //switching room active state back to offline
+      window.removeEventListener("beforeunload", handlebeforeonload)
       // Remove event listeners
       room.off(RoomEvent.TrackSubscribed, handleTrackSubscribed);
       room.off(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed);
